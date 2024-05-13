@@ -73,6 +73,11 @@ void GestionFournisseur()
     string choix;
     do
     {
+        if (cin.eof())
+        {
+            cout << "\n";
+            break;
+        }
         // Affichage du menu de gestion des fournisseurs
         cout << "\n******** Menu de Gestion des Fournisseurs ********" << endl;
         cout << "1. Ajouter un fournisseur" << endl;
@@ -81,7 +86,7 @@ void GestionFournisseur()
         cout << "4. Retour au menu principal" << endl;
         cout << "Choix : ";
         getline(cin, choix);                                       // Utiliser getline() pour lire l'entrée de l'utilisateur
-        if (choix.find_first_not_of("0123456789") == string::npos && choix != "") // Vérifier si la saisie est un entier
+        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
         {
             int choixInt = stoi(choix);
             switch (choixInt)
@@ -90,12 +95,14 @@ void GestionFournisseur()
             {
                 // Ajouter un fournisseur
                 AjouterFournisseur();
+                AfficherFournisseurs(fournisseurs);
                 break;
             }
             case 2:
             {
                 // Supprimer un fournisseur
                 SupprimerFournisseur();
+                AfficherFournisseurs(fournisseurs);
                 break;
             }
             case 3:

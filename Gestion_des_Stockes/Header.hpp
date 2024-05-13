@@ -57,6 +57,9 @@ public:
     void setDesignation(const string &newDesignation);
     void setQuantite(int newQuantite);
     void setPrixHT(float newPrixHT);
+    void setFournisseur(Fournisseur *newFournisseur);
+    void setStock(Stock *newStock);
+
 };
 
 class Fournisseur
@@ -76,6 +79,7 @@ public:
     const vector<Produit> &getProduits() const;
     const vector<Paiement *> getPaiements() const;
     void ajouterProduit(const Produit &produit);
+    void ajouterPaiement(Paiement* paiement);
     bool operator<(const Fournisseur& other) const ;
 };
 
@@ -160,4 +164,11 @@ void AfficherStocks(const list<Stock> &stocks);
 void AfficherPaiements(const deque<Paiement> &paiements);
 void AfficherProduits(const map<string, Produit *> &produits);
 void AfficherDepots(const vector<Depot> &depots);
+
+Fournisseur *TrouverFourni(int idFournisseur);
+Produit *TrouverProd(string refProduit);
+Stock* TrouverStoc(string referenceStock);
+Paiement* TrouverPaiem(int idPaiement);
+Depot* TrouverDepo(int idDepot);
+
 #endif

@@ -50,15 +50,19 @@ int main()
     do
     {
 
+        if (cin.eof())
+        {
+            cout << "\n";
+            break;
+        }                                                      // Utiliser getline() pour lire l'entrée de l'utilisateur
         cout << "\n******** Menu Principal ********" << endl;
-        cout << "7. hhhhhh" << endl;
         cout << "1. Gestion des produits" << endl;
         cout << "2. Gestion des stocks" << endl;
         cout << "3. Gestion des fournisseurs" << endl;
         cout << "4. Gestion des paiements" << endl;
         cout << "5. Quitter" << endl;
         cout << "Choix : ";
-        getline(cin, choix);                                                      // Utiliser getline() pour lire l'entrée de l'utilisateur
+        getline(cin, choix);
         if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty() ) // Vérifier si la saisie est un entier
         {
             int choixInt = stoi(choix); // onvertir la chaîne en entier
@@ -76,17 +80,6 @@ int main()
             case 4:
                 GestionPaiement();
                 break;
-            case 7:
-                AfficherFournisseurs(fournisseurs);
-                cout << "          " << endl;
-                AfficherStocks(stocks);
-                cout << "          " << endl;
-                AfficherPaiements(paiements);
-                cout << "          " << endl;
-                AfficherProduits(produits);
-                cout << "          " << endl;
-                AfficherDepots(depots);
-                break;
             case 5:
                 cout << "Au revoir !" << endl;
                 break;
@@ -103,4 +96,3 @@ int main()
 
     return 0;
 }
-//mh@abRBwzJVqf8@

@@ -21,6 +21,22 @@ void AjouterProduit()
     // Création du produit
     Produit *nouveauProduit = new Produit(refProduit, designationProduit, quantiteProduit, prixProduit, nullptr, nullptr);
 
+    // Demander à l'utilisateur de remplir les informations sur le fournisseur
+    int idFournisseur;
+    cout << "ID du fournisseur : ";
+    cin >> idFournisseur;
+    Fournisseur *fournisseur = TrouverFourni(idFournisseur);
+    if (fournisseur == nullptr)
+    {
+        cout << "Fournisseur non trouvé. Veuillez créer le fournisseur avant d'ajouter le produit." << endl;
+        return;
+    }
+
+
+    nouveauProduit->setFournisseur(fournisseur);
+
+    // Ajout du produit au fournisseur
+    fournisseur->ajouterProduit(*nouveauProduit);
 
     // Ajout du produit au map
     produits[refProduit] = nouveauProduit;
@@ -148,6 +164,11 @@ void gestionProduits()
     string choix;
     do
     {
+        if (cin.eof())
+        {
+            cout << "\n";
+            break;
+        }
         // Affichage du menu de gestion des produits
         cout << "\n******** Menu de Gestion des Produits ********" << endl;
         cout << "1. Ajouter un produit" << endl;
@@ -158,7 +179,7 @@ void gestionProduits()
         cout << "6. Retour au menu principal" << endl;
         cout << "Choix : ";
         getline(cin, choix);
-        if (choix.find_first_not_of("0123456789") == string::npos && choix != "") // Vérifier si la saisie est un entier
+        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
         {
             int choixInt = stoi(choix);
             switch (choixInt)
@@ -166,14 +187,17 @@ void gestionProduits()
             case 1:
                 // Ajouter un produit
                 AjouterProduit();
+                AfficherProduits(produits);
                 break;
             case 2:
                 // Modifier un produit
                 ModifierProduit();
+                AfficherProduits(produits);
                 break;
             case 3:
                 // Supprimer un produit
                 SupprimerProduit();
+                AfficherProduits(produits);
                 break;
             case 4:
                 // Afficher le nombre de produits dont la date de paiement a dépassé les 6 mois
@@ -182,6 +206,7 @@ void gestionProduits()
             case 5:
                 // Augmenter le prix des produits de 20% si la quantité est inférieure à 100 pièces
                 AugmenterPrix();
+                AfficherProduits(produits);
                 break;
             case 6:
                 cout << "Retour au menu principal." << endl;

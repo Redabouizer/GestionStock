@@ -12,6 +12,7 @@ void afficherMenuGestionPaiement()
     cout << "Choix : ";
 }
 
+
 void remplirListePaiements()
 {
     int nombrePaiements;
@@ -20,10 +21,10 @@ void remplirListePaiements()
 
     for (int i = 0; i < nombrePaiements; ++i)
     {
-        int idPaiement;
+        int idPaiement, idFournisseur;
         float montant;
         int jour, mois, annee;
-        // Demander à l'utilisateur de saisir les détails du paiement
+
         cout << "ID du paiement : ";
         cin >> idPaiement;
         cout << "Montant : ";
@@ -32,8 +33,54 @@ void remplirListePaiements()
         cin >> jour >> mois >> annee;
         Date datePaiement = {jour, mois, annee};
 
-        // Ajouter le paiement à la liste
-        paiements.emplace_back(idPaiement, montant, datePaiement, nullptr); // Ajouter le fournisseur approprié ici
+        cout << "ID du fournisseur : ";
+        cin >> idFournisseur;
+
+        // Recherche du fournisseur correspondant dans une liste de fournisseurs existante
+        Fournisseur *fournisseur = TrouverFourni(idFournisseur);
+
+        if (fournisseur != nullptr)
+        {
+            // Créer un nouveau paiement avec le fournisseur
+            Paiement paiement(idPaiement, montant, datePaiement, fournisseur);
+
+            // Saisir les détails du produit associé
+            int nombreProduits;
+            cout << "Entrez le nombre de produits associés au paiement : ";
+            cin >> nombreProduits;
+
+            for (int j = 0; j < nombreProduits; ++j)
+            {
+                string refProduit;
+                cout << "Reference du produit associé #" << j + 1 << " : ";
+                cin >> refProduit;
+
+                // Recherche du produit correspondant
+                Produit *produit = TrouverProd(refProduit);
+                if (produit != nullptr)
+                {
+                    // Ajouter le produit à la liste de produits du paiement
+                    paiement.ajouterProduit(produit);
+                    fournisseur->ajouterProduit(*produit);
+                }
+                else
+                {
+                    cout << "Le produit avec la reference spécifiée n'a pas été trouvé." << endl;
+                    // Gérer le cas où le produit n'est pas trouvé
+                    // Peut-être demander à l'utilisateur de saisir à nouveau la référence du produit ou gérer d'une autre manière
+                }
+            }
+
+            // Ajouter le paiement à la liste des paiements
+            paiements.emplace_back(paiement);
+            fournisseur->ajouterPaiement(&paiements.back());
+        }
+        else
+        {
+            cout << "Le fournisseur avec l'ID spécifié n'a pas été trouvé." << endl;
+            // Gérer le cas où le fournisseur n'est pas trouvé
+            // Peut-être demander à l'utilisateur de saisir à nouveau l'ID du fournisseur ou gérer d'une autre manière
+        }
     }
     cout << "Liste des paiements ajoutée avec succès." << endl;
 }
@@ -120,7 +167,6 @@ void AjouterProduit(deque<Paiement>::iterator it)
 
     // Création du nouveau produit
     Produit *nouveauProduit = new Produit(refProduit, desProduit, quantiteProduit, prixProduit, nullptr, nullptr);
-
 
     // Ajouter le nouveau produit au paiement
     it->ajouterProduit(nouveauProduit);
@@ -259,13 +305,18 @@ void ActionProduitPaiement()
         string action;
         do
         {
+            if (cin.eof())
+            {
+                cout << "\n";
+                break;
+            }
             // Proposer à l'utilisateur de choisir l'action à effectuer
             cout << "Choisissez une action : " << endl;
             cout << "1. Ajouter un produit" << endl;
             cout << "2. Modifier un produit" << endl;
             cout << "3. Supprimer un produit" << endl;
             getline(cin, action);
-            if (action.find_first_not_of("0123456789") == string::npos && action != "") // Vérifier si la saisie est un entier
+            if (action.find_first_not_of("0123456789") == string::npos && !action.empty()) // Vérifier si la saisie est un entier
             {
                 int actionInt = stoi(action);
                 switch (actionInt)
@@ -318,9 +369,14 @@ void GestionPaiement()
     string choix;
     do
     {
+        if (cin.eof())
+        {
+            cout << "\n";
+            break;
+        }
         afficherMenuGestionPaiement();
         getline(cin, choix);
-        if (choix.find_first_not_of("0123456789") == string::npos && choix != "") // Vérifier si la saisie est un entier
+        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
         {
             int choixInt = stoi(choix);
             switch (choixInt)
@@ -329,24 +385,28 @@ void GestionPaiement()
             {
                 // Fonctionnalité a: Remplir la liste des paiements
                 remplirListePaiements();
+                AfficherPaiements(paiements);
                 break;
             }
             case 2:
             {
                 // Fonctionnalité b: Ajouter 20% de TVA sur les produits de chaque paiement
                 ajouterTVA();
+                AfficherPaiements(paiements);
                 break;
             }
             case 3:
             {
                 // Fonctionnalité c: Modifier le fournisseur d'un paiement donné
                 ModifierFournisseurPaiement();
+                AfficherPaiements(paiements);
                 break;
             }
             case 4:
             {
                 // Fonctionnalité d: Ajouter/modifier/supprimer un produit d'un paiement donné
                 ActionProduitPaiement();
+                AfficherPaiements(paiements);
                 break;
             }
             case 5:

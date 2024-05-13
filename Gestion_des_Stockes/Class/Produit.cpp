@@ -14,3 +14,5 @@ void Produit::setReference(const string &newReference) { reference = newReferenc
 void Produit::setDesignation(const string &newDesignation) { designation = newDesignation; }
 void Produit::setQuantite(int newQuantite) { quantite = newQuantite; }
 void Produit::setPrixHT(float newPrixHT) { prixHT = newPrixHT; }
+void Produit::setFournisseur(Fournisseur *newFournisseur){ fournisseur = newFournisseur;}
+void Produit::setStock(Stock *newStock) { stock = newStock;}

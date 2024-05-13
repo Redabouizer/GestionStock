@@ -13,6 +13,11 @@ void Fournisseur::ajouterProduit(const Produit &produit)
     produits.push_back(produit);
 }
 
+void Fournisseur::ajouterPaiement(Paiement* paiement)
+{
+    paiements.push_back(paiement);
+}
+
 // Méthode pour accéder aux produits du fournisseur
 const vector<Produit> &Fournisseur::getProduits() const
 {

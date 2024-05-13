@@ -162,3 +162,63 @@ void AfficherDepots(const vector<Depot> &depots)
         cout << endl;
     }
 }
+
+Fournisseur *TrouverFourni(int idFournisseur)
+{
+    for (const auto &fournisseur : fournisseurs)
+    {
+        if (fournisseur.getIdFournisseur() == idFournisseur)
+        {
+            return const_cast<Fournisseur *>(&fournisseur);
+        }
+    }
+    return nullptr;
+}
+
+Produit *TrouverProd(string refProduit)
+{
+    for (const auto &paire : produits)
+    {
+        if (paire.second->getReference() == refProduit)
+        {
+            return paire.second;
+        }
+    }
+    return nullptr;
+}
+
+Stock *TrouverStoc(string referenceStock)
+{
+    for (auto it = stocks.begin(); it != stocks.end(); ++it)
+    {
+        if (it->getReferenceStock() == referenceStock)
+        {
+            return &(*it);
+        }
+    }
+    return nullptr; // Stock non trouvé
+}
+
+Depot* TrouverDepo(int idDepot)
+{
+    for (auto& depot : depots)
+    {
+        if (depot.getIdDepot() == idDepot)
+        {
+            return &depot;
+        }
+    }
+    return nullptr;
+}
+
+Paiement* TrouverPaiem(int idPaiement)
+{
+    for (auto& paiement : paiements)
+    {
+        if (paiement.getIdPaiement() == idPaiement)
+        {
+            return &paiement;
+        }
+    }
+    return nullptr;
+}

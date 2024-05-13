@@ -10,12 +10,53 @@ void AjouterStock()
     cout << "Description du stock : ";
     cin >> descStock;
 
-    // Création du stock
-    Stock nouveauStock(refStock, descStock, nullptr); // Supposons qu'on initialise depot à nullptr
+    // Vérification si le stock existe déjà
+    Stock *stockExistant = TrouverStoc(refStock);
+    if (stockExistant != nullptr)
+    {
+        cout << "Un stock avec cette référence existe déjà. Veuillez en choisir une autre." << endl;
+        return;
+    }
 
-    // Ajout du stock à la liste
-    stocks.push_back(nouveauStock);
-    cout << "Stock ajouté avec succès !" << endl;
+    // Création du stock
+    // Supposons qu'on initialise depot à nullptr
+
+    // Demande de saisie de la référence du produit et de l'ID du dépôt
+    string refProduit;
+    int idDepot;
+    cout << "Entrez la référence du produit : ";
+    cin >> refProduit;
+    cout << "Entrez l'ID du dépôt : ";
+    cin >> idDepot;
+
+    // Recherche du produit et du dépôt
+    Produit *produit = TrouverProd(refProduit);
+    Depot *depot = TrouverDepo(idDepot);
+
+    // Vérification si le produit et le dépôt existent
+    if (produit && depot)
+    {
+        // Ajout du produit au stock
+        Stock nouveauStock(refStock, descStock, depot);
+        nouveauStock.ajouterProduit(produit);
+        depot->ajouterStock(&nouveauStock);
+        produit->setStock(&nouveauStock);
+        stocks.push_back(nouveauStock);
+        cout << "Stock ajouté avec succès !" << endl;
+    }
+    else
+    {
+        // Afficher les détails de l'élément non trouvé
+        if (!produit)
+        {
+            cout << "Produit avec la référence " << refProduit << " non trouvé." << endl;
+        }
+        if (!depot)
+        {
+            cout << "Dépôt avec l'ID " << idDepot << " non trouvé." << endl;
+        }
+        cout << "Impossible d'ajouter le stock." << endl;
+    }
 }
 
 void AfficherNbProduits()
@@ -84,6 +125,11 @@ void GestionStock()
     string choix;
     do
     {
+        if (cin.eof())
+        {
+            cout << "\n";
+            break;
+        }
         // Affichage du menu de gestion des stocks
         cout << "\n********Menu de Gestion des Stocks********" << endl;
         cout << "1. Ajouter un stock" << endl;
@@ -93,7 +139,7 @@ void GestionStock()
         cout << "5. Retour au menu principal" << endl;
         cout << "Choix : ";
         getline(cin, choix);
-        if (choix.find_first_not_of("0123456789") == string::npos && choix != "") // Vérifier si la saisie est un entier
+        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
         {
             int choixInt = stoi(choix);
             switch (choixInt)
@@ -102,6 +148,7 @@ void GestionStock()
             {
                 // Ajouter un stock
                 AjouterStock();
+                AfficherStocks(stocks);
                 break;
             }
             case 2:
@@ -114,12 +161,14 @@ void GestionStock()
             {
                 // Modifier un stock
                 ModifierStock();
+                AfficherStocks(stocks);
                 break;
             }
             case 4:
             {
                 // Supprimer un stock
                 SupprimerStock();
+                AfficherStocks(stocks);
                 break;
             }
             case 5:
