@@ -2,6 +2,7 @@
 
 void afficherMenuGestionPaiement()
 {
+    cout << "\n-----------------------------------------------" << endl;
     cout << "\n******** Menu de Gestion des Paiements ********" << endl;
     cout << "1. Remplir la liste des paiements" << endl;
     cout << "2. Ajouter 20% de TVA sur les produits de chaque paiement" << endl;
@@ -11,7 +12,6 @@ void afficherMenuGestionPaiement()
     cout << "6. Retour au menu principal" << endl;
     cout << "Choix : ";
 }
-
 
 void remplirListePaiements()
 {
@@ -66,8 +66,6 @@ void remplirListePaiements()
                 else
                 {
                     cout << "Le produit avec la reference spécifiée n'a pas été trouvé." << endl;
-                    // Gérer le cas où le produit n'est pas trouvé
-                    // Peut-être demander à l'utilisateur de saisir à nouveau la référence du produit ou gérer d'une autre manière
                 }
             }
 
@@ -78,8 +76,6 @@ void remplirListePaiements()
         else
         {
             cout << "Le fournisseur avec l'ID spécifié n'a pas été trouvé." << endl;
-            // Gérer le cas où le fournisseur n'est pas trouvé
-            // Peut-être demander à l'utilisateur de saisir à nouveau l'ID du fournisseur ou gérer d'une autre manière
         }
     }
     cout << "Liste des paiements ajoutée avec succès." << endl;
@@ -149,35 +145,29 @@ void ModifierFournisseurPaiement()
 
 void AjouterProduit(deque<Paiement>::iterator it)
 {
-    // Ajouter un produit
-    // Demander à l'utilisateur de saisir les détails du nouveau produit
-    string refProduit, desProduit;
-    int quantiteProduit;
-    float prixProduit;
-
-    cout << "Nouveau produit :" << endl;
-    cout << "Référence du produit : ";
+    // Demander à l'utilisateur de saisir la référence du produit à ajouter
+    string refProduit;
+    cout << "Référence du produit à ajouter : ";
     cin >> refProduit;
-    cout << "Désignation du produit : ";
-    cin >> desProduit;
-    cout << "Quantité du produit : ";
-    cin >> quantiteProduit;
-    cout << "Prix du produit : ";
-    cin >> prixProduit;
 
-    // Création du nouveau produit
-    Produit *nouveauProduit = new Produit(refProduit, desProduit, quantiteProduit, prixProduit, nullptr, nullptr);
+    // Recherche du produit dans la map
+    auto produitIt = produits.find(refProduit);
 
-    // Ajouter le nouveau produit au paiement
-    it->ajouterProduit(nouveauProduit);
-
-    cout << "Produit ajouté avec succès au paiement !" << endl;
+    if (produitIt != produits.end()) // Le produit existe dans la map
+    {
+        // Ajouter le produit au paiement
+        it->ajouterProduit(produitIt->second);
+        cout << "Produit ajouté avec succès au paiement !" << endl;
+    }
+    else // Le produit n'existe pas
+    {
+        cout << "Produit avec la référence " << refProduit << " non trouvé." << endl;
+    }
 }
 
 // Modifier un produit dans un paiement donné
 void ModifierProduit(deque<Paiement>::iterator it)
 {
-
     // Vérifiez s'il y a des produits dans le paiement
     if (it->getProduits().empty())
     {
@@ -216,34 +206,29 @@ void ModifierProduit(deque<Paiement>::iterator it)
     cout << "Quantité : " << produitAModifier->getQuantite() << endl;
     cout << "Prix : " << produitAModifier->getPrixHT() << endl;
 
-    // Demandez à l'utilisateur de saisir les nouveaux détails du produit
-    string nouvelleRef, nouvelleDes;
-    int nouvelleQuantite;
-    float nouveauPrix;
-
-    cout << "Entrez les nouveaux détails du produit :" << endl;
-    cout << "Nouvelle référence : ";
+    // Demandez à l'utilisateur de saisir la nouvelle référence du produit
+    string nouvelleRef;
+    cout << "Entrez la nouvelle référence du produit : ";
     cin >> nouvelleRef;
-    cout << "Nouvelle désignation : ";
-    cin >> nouvelleDes;
-    cout << "Nouvelle quantité : ";
-    cin >> nouvelleQuantite;
-    cout << "Nouveau prix : ";
-    cin >> nouveauPrix;
 
-    // Mettez à jour les détails du produit dans le paiement
-    produitAModifier->setReference(nouvelleRef);
-    produitAModifier->setDesignation(nouvelleDes);
-    produitAModifier->setQuantite(nouvelleQuantite);
-    produitAModifier->setPrixHT(nouveauPrix);
+    // Recherchez le produit dans la map
+    auto produitIt = produits.find(nouvelleRef);
 
-    cout << "Produit mis à jour avec succès !" << endl;
+    if (produitIt != produits.end()) // Le produit existe dans la map
+    {
+        // Mettez à jour le produit dans le paiement avec le produit trouvé dans la map
+        produitAModifier = produitIt->second;
+        cout << "Produit mis à jour avec succès !" << endl;
+    }
+    else // Le produit n'existe pas
+    {
+        cout << "Produit avec la référence " << nouvelleRef << " non trouvé." << endl;
+    }
 }
 
 // Supprimer un produit dans un paiement donné
 void SupprimerProduit(deque<Paiement>::iterator it)
 {
-
     // Vérifiez s'il y a des produits dans le paiement
     if (it->getProduits().empty())
     {
@@ -272,13 +257,24 @@ void SupprimerProduit(deque<Paiement>::iterator it)
         return;
     }
 
-    // Obtenez un itérateur vers le produit sélectionné
-    auto produitASupprimer = it->getProduits().begin() + choixProduit - 1;
+    // Obtenez un pointeur vers le produit sélectionné
+    Produit *produitASupprimer = it->getProduits()[choixProduit - 1];
 
-    // Supprimez le produit du paiement
-    it->getProduits().erase(produitASupprimer);
+    // Recherchez le produit dans la map
+    auto produitIt = find_if(produits.begin(), produits.end(),
+                             [&](const pair<string, Produit *> &p)
+                             { return p.second == produitASupprimer; });
 
-    cout << "Produit supprimé avec succès !" << endl;
+    if (produitIt != produits.end()) // Le produit existe dans la map
+    {
+        // Supprimez le produit du paiement
+        it->getProduits().erase(it->getProduits().begin() + choixProduit - 1);
+        cout << "Produit supprimé avec succès !" << endl;
+    }
+    else // Le produit n'existe pas
+    {
+        cout << "Le produit sélectionné n'est pas trouvé dans la liste des produits." << endl;
+    }
 }
 
 void ActionProduitPaiement()
@@ -302,54 +298,66 @@ void ActionProduitPaiement()
         {
             cout << i + 1 << ". " << produits[i]->getReference() << " - " << produits[i]->getDesignation() << endl;
         }
-        string action;
+        int choix;
+        string input;
         do
         {
-            if (cin.eof())
-            {
-                cout << "\n";
-                break;
-            }
+
             // Proposer à l'utilisateur de choisir l'action à effectuer
+            cout << "\n------------------------------------------" << endl;
             cout << "Choisissez une action : " << endl;
             cout << "1. Ajouter un produit" << endl;
             cout << "2. Modifier un produit" << endl;
             cout << "3. Supprimer un produit" << endl;
-            getline(cin, action);
-            if (action.find_first_not_of("0123456789") == string::npos && !action.empty()) // Vérifier si la saisie est un entier
+            cout << "4. Retour au menu" << ::endl;
+            cout << "Choix : ";
+            getline(cin, input);
+            if (cin.eof())
             {
-                int actionInt = stoi(action);
-                switch (actionInt)
-                {
-                case 1:
-                    // Ajouter un produit
-                    AjouterProduit(it);
-                    break;
-                case 2:
-                    // Modifier un Produit
-                    ModifierProduit(it);
-                    break;
-                case 3:
-                    // Supprimer un produit
-                    SupprimerProduit(it);
-                    break;
-                case 4:
-                {
-                    cout << "Retour au menu principal." << ::endl;
-                    break;
-                }
-                default:
-                {
-                    cout << "Choix invalide. Veuillez saisir une option valide." << ::endl;
-                    break;
-                }
-                }
+                cout << "\nAu revoir !" << endl;
+                break;
             }
-            else
+            // Si l'entrée est vide, continuer la boucle
+            if (input.empty())
+            {
+                cout << "Veuillez saisir une valeur." << endl;
+                continue;
+            }
+            if (cin.fail() || input < "1" || input > "4")
             {
                 cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+                // Réinitialiser le flux d'entrée
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+                continue;
             }
-        } while (action != "4");
+
+            // Convertir l'entrée en entier
+            choix = stoi(input);
+
+            switch (choix)
+            {
+            case 1:
+                // Ajouter un produit
+                AjouterProduit(it);
+                break;
+            case 2:
+                // Modifier un Produit
+                ModifierProduit(it);
+                break;
+            case 3:
+                // Supprimer un produit
+                SupprimerProduit(it);
+                break;
+            case 4:
+            {
+                cout << "Retour au menu principal." << ::endl;
+                break;
+            }
+            }
+
+        } while (choix != 4);
     }
 }
 
@@ -366,70 +374,77 @@ void AfficherFiche()
 
 void GestionPaiement()
 {
-    string choix;
+    int choix;
+    string input;
     do
     {
+        afficherMenuGestionPaiement();
+        getline(cin, input);
         if (cin.eof())
         {
-            cout << "\n";
+            cout << "\nAu revoir !" << endl;
             break;
         }
-        afficherMenuGestionPaiement();
-        getline(cin, choix);
-        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
+        // Si l'entrée est vide, continuer la boucle
+        if (input.empty())
         {
-            int choixInt = stoi(choix);
-            switch (choixInt)
-            {
-            case 1:
-            {
-                // Fonctionnalité a: Remplir la liste des paiements
-                remplirListePaiements();
-                AfficherPaiements(paiements);
-                break;
-            }
-            case 2:
-            {
-                // Fonctionnalité b: Ajouter 20% de TVA sur les produits de chaque paiement
-                ajouterTVA();
-                AfficherPaiements(paiements);
-                break;
-            }
-            case 3:
-            {
-                // Fonctionnalité c: Modifier le fournisseur d'un paiement donné
-                ModifierFournisseurPaiement();
-                AfficherPaiements(paiements);
-                break;
-            }
-            case 4:
-            {
-                // Fonctionnalité d: Ajouter/modifier/supprimer un produit d'un paiement donné
-                ActionProduitPaiement();
-                AfficherPaiements(paiements);
-                break;
-            }
-            case 5:
-            {
-                // Fonctionnalité e: Afficher la fiche de paiement pour chaque paiement
-                AfficherFiche();
-                break;
-            }
-            case 6:
-            {
-                cout << "Retour au menu principal." << endl;
-                break;
-            }
-            default:
-            {
-                cout << "Choix invalide. Veuillez saisir une option valide." << endl;
-                break;
-            }
-            }
+            cout << "Veuillez saisir une valeur." << endl;
+            continue;
         }
-        else
+        if (cin.fail() || input < "1" || input > "6")
         {
             cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            // Réinitialiser le flux d'entrée
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            continue;
         }
-    } while (choix != "6");
+
+        // Convertir l'entrée en entier
+        choix = stoi(input);
+        switch (choix)
+        {
+        case 1:
+        {
+            // Fonctionnalité a: Remplir la liste des paiements
+            remplirListePaiements();
+            AfficherPaiements(paiements);
+            break;
+        }
+        case 2:
+        {
+            // Fonctionnalité b: Ajouter 20% de TVA sur les produits de chaque paiement
+            ajouterTVA();
+            AfficherPaiements(paiements);
+            break;
+        }
+        case 3:
+        {
+            // Fonctionnalité c: Modifier le fournisseur d'un paiement donné
+            ModifierFournisseurPaiement();
+            AfficherPaiements(paiements);
+            break;
+        }
+        case 4:
+        {
+            // Fonctionnalité d: Ajouter/modifier/supprimer un produit d'un paiement donné
+            ActionProduitPaiement();
+            AfficherPaiements(paiements);
+            break;
+        }
+        case 5:
+        {
+            // Fonctionnalité e: Afficher la fiche de paiement pour chaque paiement
+            AfficherFiche();
+            break;
+        }
+        case 6:
+        {
+            cout << "Retour au menu principal." << endl;
+            break;
+        }
+        }
+
+    } while (choix != 6);
 }

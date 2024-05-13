@@ -36,12 +36,21 @@ void AjouterStock()
     // Vérification si le produit et le dépôt existent
     if (produit && depot)
     {
-        // Ajout du produit au stock
-        Stock nouveauStock(refStock, descStock, depot);
-        nouveauStock.ajouterProduit(produit);
-        depot->ajouterStock(&nouveauStock);
-        produit->setStock(&nouveauStock);
-        stocks.push_back(nouveauStock);
+        // Demander le nombre de produits à ajouter
+        int nombreProduits;
+        cout << "Combien de produits souhaitez-vous ajouter au stock ? ";
+        cin >> nombreProduits;
+
+        // Ajouter le produit au stock autant de fois que nécessaire
+        for (int i = 0; i < nombreProduits; ++i)
+        {
+            Stock nouveauStock(refStock, descStock, depot);
+            nouveauStock.ajouterProduit(produit);
+            depot->ajouterStock(&nouveauStock);
+            produit->setStock(&nouveauStock);
+            stocks.push_back(nouveauStock);
+        }
+
         cout << "Stock ajouté avec succès !" << endl;
     }
     else
@@ -122,15 +131,11 @@ void SupprimerStock()
 void GestionStock()
 {
 
-    string choix;
+    int choix;
+    string input;
     do
     {
-        if (cin.eof())
-        {
-            cout << "\n";
-            break;
-        }
-        // Affichage du menu de gestion des stocks
+        cout << "\n------------------------------------------" << endl;
         cout << "\n********Menu de Gestion des Stocks********" << endl;
         cout << "1. Ajouter un stock" << endl;
         cout << "2. Afficher le nombre de produits de chaque stock" << endl;
@@ -138,54 +143,64 @@ void GestionStock()
         cout << "4. Supprimer un stock" << endl;
         cout << "5. Retour au menu principal" << endl;
         cout << "Choix : ";
-        getline(cin, choix);
-        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
+        getline(cin, input);
+        if (cin.eof())
         {
-            int choixInt = stoi(choix);
-            switch (choixInt)
-            {
-            case 1:
-            {
-                // Ajouter un stock
-                AjouterStock();
-                AfficherStocks(stocks);
-                break;
-            }
-            case 2:
-            {
-                // Afficher le nombre de produits de chaque stock
-                AfficherNbProduits();
-                break;
-            }
-            case 3:
-            {
-                // Modifier un stock
-                ModifierStock();
-                AfficherStocks(stocks);
-                break;
-            }
-            case 4:
-            {
-                // Supprimer un stock
-                SupprimerStock();
-                AfficherStocks(stocks);
-                break;
-            }
-            case 5:
-            {
-                cout << "Retour au menu principal." << endl;
-                break;
-            }
-            default:
-            {
-                cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-                break;
-            }
-            }
+             cout << "\nAu revoir !" << endl;
+            break;
         }
-        else
+        // Si l'entrée est vide, continuer la boucle
+        if (input.empty())
+        {
+            cout << "Veuillez saisir une valeur." << endl;
+            continue;
+        }
+        if (cin.fail() || input < "1" || input > "5")
         {
             cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            // Réinitialiser le flux d'entrée
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            continue;
         }
-    } while (choix != "5");
+
+        // Convertir l'entrée en entier
+        choix = stoi(input);
+        switch (choix)
+        {
+        case 1:
+        {
+            // Ajouter un stock
+            AjouterStock();
+            AfficherStocks(stocks);
+            break;
+        }
+        case 2:
+        {
+            // Afficher le nombre de produits de chaque stock
+            AfficherNbProduits();
+            break;
+        }
+        case 3:
+        {
+            // Modifier un stock
+            ModifierStock();
+            AfficherStocks(stocks);
+            break;
+        }
+        case 4:
+        {
+            // Supprimer un stock
+            SupprimerStock();
+            AfficherStocks(stocks);
+            break;
+        }
+        case 5:
+        {
+            cout << "Retour au menu principal." << endl;
+            break;
+        }
+        }
+    } while (choix != 5);
 }

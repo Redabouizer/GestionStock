@@ -70,62 +70,69 @@ void AfficherProduitsS()
 void GestionFournisseur()
 {
 
-    string choix;
+    int choix;
+    string input;
     do
     {
-        if (cin.eof())
-        {
-            cout << "\n";
-            break;
-        }
-        // Affichage du menu de gestion des fournisseurs
+        cout << "\n------------------------------------------" << endl;
         cout << "\n******** Menu de Gestion des Fournisseurs ********" << endl;
         cout << "1. Ajouter un fournisseur" << endl;
         cout << "2. Supprimer un fournisseur" << endl;
         cout << "3. Afficher les produits dont le prix est supérieur à 150dh" << endl;
         cout << "4. Retour au menu principal" << endl;
         cout << "Choix : ";
-        getline(cin, choix);                                       // Utiliser getline() pour lire l'entrée de l'utilisateur
-        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
+        getline(cin, input);
+        if (cin.eof())
         {
-            int choixInt = stoi(choix);
-            switch (choixInt)
-            {
-            case 1:
-            {
-                // Ajouter un fournisseur
-                AjouterFournisseur();
-                AfficherFournisseurs(fournisseurs);
-                break;
-            }
-            case 2:
-            {
-                // Supprimer un fournisseur
-                SupprimerFournisseur();
-                AfficherFournisseurs(fournisseurs);
-                break;
-            }
-            case 3:
-            {
-                // Afficher les produits dont le prix est supérieur à 150dh pour chaque fournisseur
-                AfficherProduitsS();
-                break;
-            }
-            case 4:
-            {
-                cout << "Retour au menu principal." << endl;
-                break;
-            }
-            default:
-            {
-                cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-                break;
-            }
-            }
+            cout << "\nAu revoir !" << endl;
+            break;
         }
-        else
+        // Si l'entrée est vide, continuer la boucle
+        if (input.empty())
+        {
+            cout << "Veuillez saisir une valeur." << endl;
+            continue;
+        }
+        if (cin.fail() || input < "1" || input > "4")
         {
             cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            // Réinitialiser le flux d'entrée
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            continue;
         }
-    } while (choix != "4");
+
+        // Convertir l'entrée en entier
+        choix = stoi(input);
+
+        switch (choix)
+        {
+        case 1:
+        {
+            // Ajouter un fournisseur
+            AjouterFournisseur();
+            AfficherFournisseurs(fournisseurs);
+            break;
+        }
+        case 2:
+        {
+            // Supprimer un fournisseur
+            SupprimerFournisseur();
+            AfficherFournisseurs(fournisseurs);
+            break;
+        }
+        case 3:
+        {
+            // Afficher les produits dont le prix est supérieur à 150dh pour chaque fournisseur
+            AfficherProduitsS();
+            break;
+        }
+        case 4:
+        {
+            cout << "Retour au menu principal." << endl;
+            break;
+        }
+        }
+    } while (choix != 4);
 }

@@ -32,7 +32,6 @@ void AjouterProduit()
         return;
     }
 
-
     nouveauProduit->setFournisseur(fournisseur);
 
     // Ajout du produit au fournisseur
@@ -161,7 +160,8 @@ void AugmenterPrix()
 
 void gestionProduits()
 {
-    string choix;
+    int choix;
+    string input;
     do
     {
         if (cin.eof())
@@ -170,6 +170,7 @@ void gestionProduits()
             break;
         }
         // Affichage du menu de gestion des produits
+        cout << "\n----------------------------------------------" << endl;
         cout << "\n******** Menu de Gestion des Produits ********" << endl;
         cout << "1. Ajouter un produit" << endl;
         cout << "2. Modifier un produit" << endl;
@@ -178,47 +179,59 @@ void gestionProduits()
         cout << "5. Augmenter le prix des produits de 20% si la quantité est inférieure à 100 pièces" << endl;
         cout << "6. Retour au menu principal" << endl;
         cout << "Choix : ";
-        getline(cin, choix);
-        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty()) // Vérifier si la saisie est un entier
+        getline(cin, input);
+        if (cin.eof())
         {
-            int choixInt = stoi(choix);
-            switch (choixInt)
-            {
-            case 1:
-                // Ajouter un produit
-                AjouterProduit();
-                AfficherProduits(produits);
-                break;
-            case 2:
-                // Modifier un produit
-                ModifierProduit();
-                AfficherProduits(produits);
-                break;
-            case 3:
-                // Supprimer un produit
-                SupprimerProduit();
-                AfficherProduits(produits);
-                break;
-            case 4:
-                // Afficher le nombre de produits dont la date de paiement a dépassé les 6 mois
-                ProduitsDate();
-                break;
-            case 5:
-                // Augmenter le prix des produits de 20% si la quantité est inférieure à 100 pièces
-                AugmenterPrix();
-                AfficherProduits(produits);
-                break;
-            case 6:
-                cout << "Retour au menu principal." << endl;
-                break;
-            default:
-                cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-                break;
-            }
+            cout << "\nAu revoir !" << endl;
+            break;
         }
-        else
+        // Si l'entrée est vide, continuer la boucle
+        if (input.empty())
+        {
+            cout << "Veuillez saisir une valeur." << endl;
+            continue;
+        }
+        if (cin.fail() || input < "1" || input > "6")
         {
             cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            // Réinitialiser le flux d'entrée
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            continue;
         }
-    } while (choix != "6");
+
+        // Convertir l'entrée en entier
+        choix = stoi(input);
+        switch (choix)
+        {
+        case 1:
+            // Ajouter un produit
+            AjouterProduit();
+            AfficherProduits(produits);
+            break;
+        case 2:
+            // Modifier un produit
+            ModifierProduit();
+            AfficherProduits(produits);
+            break;
+        case 3:
+            // Supprimer un produit
+            SupprimerProduit();
+            AfficherProduits(produits);
+            break;
+        case 4:
+            // Afficher le nombre de produits dont la date de paiement a dépassé les 6 mois
+            ProduitsDate();
+            break;
+        case 5:
+            // Augmenter le prix des produits de 20% si la quantité est inférieure à 100 pièces
+            AugmenterPrix();
+            AfficherProduits(produits);
+            break;
+        case 6:
+            cout << "Retour au menu principal." << endl;
+            break;
+        }
+    } while (choix != 6);
 }

@@ -13,15 +13,15 @@ int main()
     depots.push_back(depot2);
 
     Stock stock1("REF001", "Description du stock 1", &depot1);
-    Stock stock2("REF002", "Description du stock 2", &depot2); 
+    Stock stock2("REF002", "Description du stock 2", &depot2);
 
     // Creating Produits
     Produit produit1("REF001", "Produit 1", 10, 100.0, &stock1, &fournisseur1);
     Produit produit2("REF002", "Produit 2", 5, 50.0, &stock2, &fournisseur2);
 
     // Creating Dates
-    Date date1 = {12, 5, 2024};
-    Date date2 = {20, 6, 2024};
+    Date date1 = {12, 10, 2023};
+    Date date2 = {20, 4, 2024};
 
     // Creating Paiements
     Paiement paiement1(1, 150.0, date1, &fournisseur1);
@@ -46,15 +46,13 @@ int main()
     produits.emplace(produit2.getReference(), &produit2);
 
     // Affichage du menu principal
-    string choix;
+    int choix;
+    string input;
     do
     {
 
-        if (cin.eof())
-        {
-            cout << "\n";
-            break;
-        }                                                      // Utiliser getline() pour lire l'entrée de l'utilisateur
+        // Utiliser getline() pour lire l'entrée de l'utilisateur
+        cout << "\n------------------------------------------" << endl;
         cout << "\n******** Menu Principal ********" << endl;
         cout << "1. Gestion des produits" << endl;
         cout << "2. Gestion des stocks" << endl;
@@ -62,37 +60,51 @@ int main()
         cout << "4. Gestion des paiements" << endl;
         cout << "5. Quitter" << endl;
         cout << "Choix : ";
-        getline(cin, choix);
-        if (choix.find_first_not_of("0123456789") == string::npos && !choix.empty() ) // Vérifier si la saisie est un entier
+        getline(cin, input);
+        if (cin.eof())
         {
-            int choixInt = stoi(choix); // onvertir la chaîne en entier
-            switch (choixInt)
-            {
-            case 1:
-                gestionProduits();
-                break;
-            case 2:
-                GestionStock();
-                break;
-            case 3:
-                GestionFournisseur();
-                break;
-            case 4:
-                GestionPaiement();
-                break;
-            case 5:
-                cout << "Au revoir !" << endl;
-                break;
-            default:
-                cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-                break;
-            }
+            cout << "\nAu revoir !" << endl;
+            break;
         }
-        else
+        // Si l'entrée est vide, continuer la boucle
+        if (input.empty())
+        {
+            cout << "Veuillez saisir une valeur." << endl;
+            continue;
+        }
+        if (cin.fail() || input < "1" || input > "5")
         {
             cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            // Réinitialiser le flux d'entrée
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            continue;
         }
-    } while (choix != "5");
+
+        // Convertir l'entrée en entier
+        choix = stoi(input);
+
+        switch (choix)
+        {
+        case 1:
+            gestionProduits();
+            break;
+        case 2:
+            GestionStock();
+            break;
+        case 3:
+            GestionFournisseur();
+            break;
+        case 4:
+            GestionPaiement();
+            break;
+        case 5:
+            cout << "Au revoir !" << endl;
+            break;
+        }
+
+    } while (choix != 5);
 
     return 0;
 }
