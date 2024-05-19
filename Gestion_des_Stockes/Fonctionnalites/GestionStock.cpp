@@ -26,15 +26,16 @@ void AjouterStock()
     int idDepot;
     string idDepotstr;
     Depot *depot = nullptr;
+    vector<Depot> depots; // Vector to store existing depots
 
-    // Demande de l'ID du dépôt avec vérification
+    // Prompt user to enter the ID of the depot with verification
     do
     {
         cout << "Entrez l'ID du dépôt : ";
         cin >> idDepotstr;
 
         // Check if the input is a valid integer
-        if (!estNombre(idDepotstr)) // Assuming estNombre() is a function that checks if the string represents a valid integer
+        if (!estNombre(idDepotstr))
         {
             cout << "L'ID du dépôt doit être un nombre entier. Veuillez réessayer." << endl;
             continue;
@@ -42,10 +43,30 @@ void AjouterStock()
 
         idDepot = stoi(idDepotstr); // Convert string to integer
 
+        // Find the depot by ID
         depot = TrouverDepo(idDepot);
+
         if (!depot)
         {
-            cout << "Dépôt avec l'ID " << idDepot << " non trouvé. Veuillez essayer à nouveau." << endl;
+            cout << "Dépôt avec l'ID " << idDepot << " non trouvé. Voulez-vous le créer ? (O/N) : ";
+            char choix;
+            cin >> choix;
+            if (choix == 'O' || choix == 'o')
+            {
+                // Code to create the new depot (not implemented in this example)
+                cout << "Création du nouveau dépôt avec l'ID " << idDepot << "." << endl;
+                // Assume the user will input the address and capacity for the new depot
+                string address;
+                int capacity;
+                cout << "Entrez l'adresse du nouveau dépôt : ";
+                cin >> address;
+                cout << "Entrez la capacité du nouveau dépôt : ";
+                cin >> capacity;
+                // Create the new depot and add it to the depots vector
+                depots.emplace_back(idDepot, address, capacity);
+                // Set the depot pointer to point to the newly created depot
+                depot = &depots.back();
+            }
         }
     } while (!depot);
 

@@ -6,7 +6,6 @@ deque<Paiement> paiements;
 map<string, Produit *> produits;
 vector<Depot> depots;
 
-
 void AfficherFournisseurs(const set<Fournisseur> &fournisseurs)
 {
     cout << "Liste des fournisseurs :" << endl;
@@ -92,32 +91,43 @@ void AfficherPaiements(const deque<Paiement> &paiements)
     }
 }
 
-void AfficherProduits(const std::map<std::string, Produit *> &produits) {
+void AfficherProduits(const std::map<std::string, Produit *> &produits)
+{
     std::cout << "Liste des produits :" << std::endl;
 
     std::cout << std::left << std::setw(20) << "Référence" << std::setw(20) << "Désignation" << std::setw(20) << "Quantité" << std::setw(20) << "Prix_HT" << std::setw(20) << "Réf_Stock" << std::setw(20) << "ID_Fournisseur" << std::setw(20) << "Version Logiciel" << std::setw(20) << "Version Materiel" << std::endl;
 
-    for (const auto &pair : produits) {
+    for (const auto &pair : produits)
+    {
         const Produit *produit = pair.second;
         std::cout << std::left << std::setw(20) << produit->getReference() << std::setw(20) << produit->getDesignation() << std::setw(20) << produit->getQuantite() << std::setw(20) << produit->getPrixHT();
 
-        if (produit->getStock() != nullptr) {
+        if (produit->getStock() != nullptr)
+        {
             std::cout << std::setw(20) << produit->getStock()->getReferenceStock();
-        } else {
+        }
+        else
+        {
             std::cout << std::setw(20) << "-";
         }
 
         // Vérifier si le produit est associé à un fournisseur
-        if (produit->getFournisseur() != nullptr) {
+        if (produit->getFournisseur() != nullptr)
+        {
             std::cout << std::setw(20) << produit->getFournisseur()->getIdFournisseur();
-        } else {
+        }
+        else
+        {
             std::cout << std::setw(20) << "-";
         }
 
         // Check if the product is of type ProduitElectronique
-        if (const ProduitElectronique *produitElectronique = dynamic_cast<const ProduitElectronique *>(produit)) {
+        if (const ProduitElectronique *produitElectronique = dynamic_cast<const ProduitElectronique *>(produit))
+        {
             std::cout << std::setw(20) << produitElectronique->getVersionLogiciel() << std::setw(20) << produitElectronique->getVersionMateriel();
-        } else {
+        }
+        else
+        {
             std::cout << std::setw(20) << "-" << std::setw(20) << "-";
         }
 
@@ -153,32 +163,39 @@ void AfficherDepots(const vector<Depot> &depots)
     }
 }
 
-void AfficherProduitsElectroniques(const map<string, ProduitElectronique *> &produits) {
+void AfficherProduitsElectroniques(const map<string, ProduitElectronique *> &produits)
+{
     cout << "Liste des produits électroniques :" << endl;
 
     cout << left << setw(20) << "Référence" << setw(20) << "Désignation" << setw(20) << "Quantité" << setw(20) << "Prix_HT" << setw(20) << "Version_Materiel" << setw(20) << "Version_Logiciel" << setw(20) << "Réf_Stock" << setw(20) << "ID_Fournisseur" << endl;
 
-    for (const auto &pair : produits) {
+    for (const auto &pair : produits)
+    {
         const ProduitElectronique *produit = pair.second;
         cout << left << setw(20) << produit->getReference() << setw(20) << produit->getDesignation() << setw(20) << produit->getQuantite() << setw(20) << produit->getPrixHT() << setw(20) << produit->getVersionMateriel() << setw(20) << produit->getVersionLogiciel();
 
-        if (produit->getStock() != nullptr) {
+        if (produit->getStock() != nullptr)
+        {
             cout << setw(20) << produit->getStock()->getReferenceStock();
-        } else {
+        }
+        else
+        {
             cout << setw(20) << "-";
         }
 
         // Vérifier si le produit est associé à un fournisseur
-        if (produit->getFournisseur() != nullptr) {
+        if (produit->getFournisseur() != nullptr)
+        {
             cout << setw(20) << produit->getFournisseur()->getIdFournisseur();
-        } else {
+        }
+        else
+        {
             cout << setw(20) << "-";
         }
 
         cout << endl;
     }
 }
-
 
 Fournisseur *TrouverFourni(int idFournisseur)
 {
@@ -202,7 +219,6 @@ Produit *TrouverProd(const string &refProduit)
     return nullptr;
 }
 
-
 Stock *TrouverStoc(string refStock)
 {
     for (auto it = stocks.begin(); it != stocks.end(); ++it)
@@ -212,9 +228,8 @@ Stock *TrouverStoc(string refStock)
             return &(*it);
         }
     }
-    return nullptr; // Stock non trouvé
+    return nullptr;
 }
-
 Depot *TrouverDepo(int idDepot)
 {
     for (auto &depot : depots)

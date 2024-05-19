@@ -3,58 +3,36 @@
 int main()
 {
 
-    // Creating Fournisseurs
     Fournisseur fournisseur1(1, "Fournisseur 1", "Contact 1");
     Fournisseur fournisseur2(2, "Fournisseur 2", "Contact 2");
-
-    Depot depot1(1, "Adresse 1", 100);
-    Depot depot2(2, "Adresse 2", 200);
-    depots.push_back(depot1);
-    depots.push_back(depot2);
-
-    Stock stock1("REF001", "Description du stock 1", &depot1);
-    Stock stock2("REF002", "Description du stock 2", &depot2);
-
-    // Creating Produits
-    Produit produit1("REF001", "Produit 1", 10, 100.0, &stock1, &fournisseur1);
-    Produit produit2("REF002", "Produit 2", 5, 50.0, &stock2, &fournisseur2);
-
-    ProduitElectronique produitElectronique1("REF1", "Designation1", 10, 99.99, &stock1, &fournisseur1, "VersionMateriel1", "VersionLogiciel1");
-    ProduitElectronique produitElectronique2("REF2", "Designation2", 20, 199.99, &stock2, &fournisseur2, "VersionMateriel2", "VersionLogiciel2");
-
-    // Creating Dates
-    Date date1 = {12, 10, 2023};
-    Date date2 = {20, 4, 2024};
-
-    // Creating Paiements
-    Paiement paiement1(1, 150.0, date1, &fournisseur1);
-    paiement1.ajouterProduit(&produit1);
-
-    Paiement paiement2(2, 200.0, date2, &fournisseur2);
-    paiement2.ajouterProduit(&produit2);
-
-    depot1.ajouterStock(&stock1);
-    depot2.ajouterStock(&stock2);
 
     fournisseurs.insert(fournisseur1);
     fournisseurs.insert(fournisseur2);
 
-    stocks.push_back(stock1);
-    stocks.push_back(stock2);
+    Stock stock1("Stock 1", "Description Stock 1", nullptr);
+    Stock stock2("Stock 2", "Description Stock 2", nullptr);
+    Produit produit1("Ref1", "Produit 1", 10, 100.0f, &stock1, &fournisseur1);
+    Produit produit2("Ref2", "Produit 2", 20, 200.0f, &stock2, &fournisseur2);
+
+    produits["Ref1"] = &produit1;
+    produits["Ref2"] = &produit2;
+
+    Paiement paiement1(1, 500.0f, Date(), &fournisseur1);
+    Paiement paiement2(2, 700.0f, Date(), &fournisseur2);
 
     paiements.push_back(paiement1);
     paiements.push_back(paiement2);
 
-    produits.emplace(produit1.getReference(), &produit1);
-    produits.emplace(produit2.getReference(), &produit2);
+    Depot depot1(1, "Adresse 1", 100);
+    Depot depot2(2, "Adresse 2", 200);
 
-    // Affichage du menu principal
+    depots.push_back(depot1);
+    depots.push_back(depot2);
+
     int choix;
     string input;
     do
     {
-
-        // Utiliser getline() pour lire l'entrée de l'utilisateur
         cout << "\n------------------------------------------" << endl;
         cout << "\n******** Menu Principal ********" << endl;
         cout << "1. Gestion des produits" << endl;

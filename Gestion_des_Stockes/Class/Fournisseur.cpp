@@ -47,3 +47,4 @@ const vector<Paiement *> Fournisseur::getPaiements() const
 bool Fournisseur::operator<(const Fournisseur& other) const {
     return this->getIdFournisseur() < other.getIdFournisseur();
 }
+
