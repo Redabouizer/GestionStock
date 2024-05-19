@@ -1,4 +1,5 @@
 
+
 NAME		= GestionStock
 
 CC			= c++
@@ -9,7 +10,7 @@ OBJDIR = .GestionStock
 
 
 FILES	=	main \
-			DataBase \
+			Donnee \
 			Class/Depot \
 			Class/Fournisseur \
 			Class/Paiement \

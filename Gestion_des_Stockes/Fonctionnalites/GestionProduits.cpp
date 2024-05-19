@@ -8,80 +8,219 @@ void AjouterProduit()
     string designationProduit;
     int quantiteProduit;
     float prixProduit;
+    string typeProduit;
 
-    cout << "Référence du produit : ";
-    cin >> refProduit;
-    cout << "Désignation du produit : ";
-    cin >> designationProduit;
-    cout << "Quantité du produit : ";
-    cin >> quantiteProduit;
-    cout << "Prix du produit : ";
-    cin >> prixProduit;
+    // Prompt for the type of product
+    cout << "Type du produit (Standard/Electronique) : ";
+    cin >> typeProduit;
 
-    // Création du produit
-    Produit *nouveauProduit = new Produit(refProduit, designationProduit, quantiteProduit, prixProduit, nullptr, nullptr);
-
-    // Demander à l'utilisateur de remplir les informations sur le fournisseur
-    int idFournisseur;
-    cout << "ID du fournisseur : ";
-    cin >> idFournisseur;
-    Fournisseur *fournisseur = TrouverFourni(idFournisseur);
-    if (fournisseur == nullptr)
+    // Loop until a unique product reference is provided
+    while (true)
     {
-        cout << "Fournisseur non trouvé. Veuillez créer le fournisseur avant d'ajouter le produit." << endl;
-        return;
+        cout << "Référence du produit : ";
+        cin >> refProduit;
+
+        bool referenceExists = false;
+
+        // Check if the reference already exists
+        if (produits.find(refProduit) != produits.end())
+        {
+            cout << "Un produit avec cette référence existe déjà. Veuillez utiliser une autre référence." << endl;
+            referenceExists = true;
+        }
+
+        // If the reference does not exist, break out of the loop
+        if (!referenceExists)
+        {
+            break;
+        }
     }
 
-    nouveauProduit->setFournisseur(fournisseur);
+    // Continue with the rest of the input
+    cout << "Désignation du produit : ";
+    cin >> designationProduit;
 
-    // Ajout du produit au fournisseur
-    fournisseur->ajouterProduit(*nouveauProduit);
+    // Prompt and validate product quantity
+    string quantiteStr;
+    while (true)
+    {
+        cout << "Quantité du produit : ";
+        cin >> quantiteStr;
+        if (estNombre(quantiteStr))
+        {
+            quantiteProduit = stoi(quantiteStr);
+            break;
+        }
+        else
+        {
+            cout << "La quantité doit être un nombre entier. Veuillez réessayer." << endl;
+        }
+    }
 
-    // Ajout du produit au map
-    produits[refProduit] = nouveauProduit;
+    // Prompt and validate product price
+    string prixStr;
+    while (true)
+    {
+        cout << "Prix du produit : ";
+        cin >> prixStr;
+        if (estNombreFlottant(prixStr))
+        {
+            prixProduit = stof(prixStr);
+            break;
+        }
+        else
+        {
+            cout << "Le prix doit être un nombre valide. Veuillez réessayer." << endl;
+        }
+    }
+
+    Stock *stock = nullptr;
+    string refStock;
+    while (stock == nullptr)
+    {
+        cout << "Référence du stock : ";
+        cin >> refStock;
+        stock = TrouverStoc(refStock);
+        if (stock == nullptr)
+        {
+            cout << "Stock non trouvé. Veuillez saisir une référence valide." << endl;
+        }
+    }
+
+    int idFournisseur;
+    Fournisseur *fournisseur = nullptr;
+    string idFournisseurStr;
+    while (true)
+    {
+        cout << "ID du fournisseur : ";
+        cin >> idFournisseurStr;
+
+        if (!estNombre(idFournisseurStr))
+        {
+            cout << "L'ID du fournisseur doit être un nombre entier. Veuillez réessayer." << endl;
+            continue;
+        }
+
+        idFournisseur = stoi(idFournisseurStr);
+        fournisseur = TrouverFourni(idFournisseur);
+        if (fournisseur == nullptr)
+        {
+            cout << "Fournisseur non trouvé. Veuillez saisir une ID valide." << endl;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    Produit *nouveauProduit = nullptr;
+
+    if (typeProduit == "Electronique" || typeProduit == "electronique")
+    {
+        string versionMateriel;
+        string versionLogiciel;
+
+        cout << "Version matériel : ";
+        cin >> versionMateriel;
+        cout << "Version logiciel : ";
+        cin >> versionLogiciel;
+
+        ProduitElectronique *nouveauProduitEle = new ProduitElectronique(refProduit, designationProduit, quantiteProduit, prixProduit, stock, fournisseur, versionMateriel, versionLogiciel);
+        produits[refProduit] = nouveauProduitEle;
+        fournisseur->ajouterProduit(*nouveauProduitEle);
+        stock->ajouterProduit(nouveauProduitEle);
+    }
+    else
+    {
+        nouveauProduit = new Produit(refProduit, designationProduit, quantiteProduit, prixProduit, stock, fournisseur);
+        produits[refProduit] = nouveauProduit;
+        fournisseur->ajouterProduit(*nouveauProduit);
+        stock->ajouterProduit(nouveauProduit);
+    }
+
     cout << "Produit ajouté avec succès !" << endl;
 }
 
 void ModifierProduit()
 {
-    // Modifier un produit
     cout << "Modifier un produit :" << endl;
 
     string refProduit;
     cout << "Entrez la référence du produit à modifier : ";
     cin >> refProduit;
 
+    // Check if the product exists
     auto it = produits.find(refProduit);
     if (it != produits.end())
     {
-        // Le produit est trouvé, affichez les détails actuels et demandez les nouveaux détails
         cout << "Détails actuels du produit : " << endl;
         cout << "Référence du produit : " << it->second->getReference() << endl;
         cout << "Désignation du produit : " << it->second->getDesignation() << endl;
         cout << "Quantité du produit : " << it->second->getQuantite() << endl;
         cout << "Prix du produit : " << it->second->getPrixHT() << endl;
 
-        // Demandez les nouveaux détails du produit
+        // Update fields based on user input
         string nouvelleDesignation;
         int nouvelleQuantite;
         float nouveauPrix;
+
         cout << "Nouvelle désignation du produit : ";
         cin >> nouvelleDesignation;
-        cout << "Nouvelle quantité du produit : ";
-        cin >> nouvelleQuantite;
-        cout << "Nouveau prix du produit : ";
-        cin >> nouveauPrix;
 
-        // Mettre à jour les détails du produit
+        // Prompt and validate the new quantity
+        string nouvelleQuantiteStr;
+        while (true)
+        {
+            cout << "Nouvelle quantité du produit : ";
+            cin >> nouvelleQuantiteStr;
+            if (estNombre(nouvelleQuantiteStr))
+            {
+                nouvelleQuantite = stoi(nouvelleQuantiteStr);
+                break;
+            }
+            else
+            {
+                cout << "La quantité doit être un nombre entier. Veuillez réessayer." << endl;
+            }
+        }
+
+        // Prompt and validate the new price
+        string nouveauPrixStr;
+        while (true)
+        {
+            cout << "Nouveau prix du produit : ";
+            cin >> nouveauPrixStr;
+            if (estNombreFlottant(nouveauPrixStr))
+            {
+                nouveauPrix = stof(nouveauPrixStr);
+                break;
+            }
+            else
+            {
+                cout << "Le prix doit être un nombre valide. Veuillez réessayer." << endl;
+            }
+        }
+
         it->second->setDesignation(nouvelleDesignation);
         it->second->setQuantite(nouvelleQuantite);
         it->second->setPrixHT(nouveauPrix);
+
+        // For electronic products, update version information
+        if (dynamic_cast<ProduitElectronique *>(it->second) != nullptr)
+        {
+            string nouvelleVersionMateriel, nouvelleVersionLogiciel;
+            cout << "Nouvelle version matériel : ";
+            cin >> nouvelleVersionMateriel;
+            cout << "Nouvelle version logiciel : ";
+            cin >> nouvelleVersionLogiciel;
+            dynamic_cast<ProduitElectronique *>(it->second)->setVersionMateriel(nouvelleVersionMateriel);
+            dynamic_cast<ProduitElectronique *>(it->second)->setVersionLogiciel(nouvelleVersionLogiciel);
+        }
 
         cout << "Produit modifié avec succès !" << endl;
     }
     else
     {
-        // Le produit n'est pas trouvé
         cout << "Aucun produit trouvé avec cette référence." << endl;
     }
 }
@@ -94,17 +233,27 @@ void SupprimerProduit()
     cout << "Entrez la référence du produit à supprimer : ";
     cin >> refProduit;
 
-    auto it = produits.find(refProduit);
-    if (it != produits.end())
+    // Obtenez le produit à partir de sa référence
+    Produit *produit = TrouverProd(refProduit);
+
+    if (produit != nullptr) // Vérifiez si le produit existe
     {
-        // Le produit est trouvé, le supprimer du map
-        delete it->second; // Assurez-vous de libérer la mémoire pour éviter les fuites
-        produits.erase(it);
-        cout << "Produit supprimé avec succès !" << endl;
+        // Obtenez le fournisseur associé au produit
+        Fournisseur *fournisseur = produit->getFournisseur();
+
+        if (fournisseur != nullptr) // Vérifiez si le fournisseur est valide
+        {
+            // Supprimez le produit du fournisseur
+            fournisseur->SupprimerProduit(refProduit);
+            cout << "Produit supprimé avec succès !" << endl;
+        }
+        else
+        {
+            cout << "Aucun fournisseur trouvé pour ce produit." << endl;
+        }
     }
     else
     {
-        // Le produit n'est pas trouvé
         cout << "Aucun produit trouvé avec cette référence." << endl;
     }
 }
@@ -139,7 +288,6 @@ void ProduitsDate()
         }
     }
 
-    // Afficher le nombre total de produits dont la date de paiement a dépassé les 6 mois
     cout << "Nombre total de produits dont la date de paiement a depasse les 6 mois : " << totalProduitsDepasses << endl;
 }
 
@@ -150,8 +298,7 @@ void AugmenterPrix()
         Produit *produit = pair.second;
         if (produit->getQuantite() < 100)
         {
-            // Augmenter le prix de 20%
-            float nouveauPrix = produit->getPrixHT() * 1.2; // Augmentation de 20%
+            float nouveauPrix = produit->getPrixHT() * 1.2;
             produit->setPrixHT(nouveauPrix);
             cout << "Le prix du produit " << produit->getReference() << " a été augmenté de 20%." << endl;
         }
@@ -164,12 +311,6 @@ void gestionProduits()
     string input;
     do
     {
-        if (cin.eof())
-        {
-            cout << "\n";
-            break;
-        }
-        // Affichage du menu de gestion des produits
         cout << "\n----------------------------------------------" << endl;
         cout << "\n******** Menu de Gestion des Produits ********" << endl;
         cout << "1. Ajouter un produit" << endl;
@@ -179,53 +320,53 @@ void gestionProduits()
         cout << "5. Augmenter le prix des produits de 20% si la quantité est inférieure à 100 pièces" << endl;
         cout << "6. Retour au menu principal" << endl;
         cout << "Choix : ";
-        getline(cin, input);
+        cin >> input;
+
         if (cin.eof())
         {
             cout << "\nAu revoir !" << endl;
             break;
         }
-        // Si l'entrée est vide, continuer la boucle
-        if (input.empty())
-        {
-            cout << "Veuillez saisir une valeur." << endl;
-            continue;
-        }
+
         if (cin.fail() || input < "1" || input > "6")
         {
-            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-            // Réinitialiser le flux d'entrée
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 6." << endl;
             continue;
         }
 
-        // Convertir l'entrée en entier
-        choix = stoi(input);
+        try
+        {
+            choix = stoi(input);
+        }
+        catch (...)
+        {
+            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            continue;
+        }
+
         switch (choix)
         {
         case 1:
-            // Ajouter un produit
+            cout << "\n------------------------------------------" << endl;
             AjouterProduit();
             AfficherProduits(produits);
             break;
         case 2:
-            // Modifier un produit
+            cout << "\n------------------------------------------" << endl;
             ModifierProduit();
             AfficherProduits(produits);
             break;
         case 3:
-            // Supprimer un produit
+            cout << "\n------------------------------------------" << endl;
             SupprimerProduit();
             AfficherProduits(produits);
             break;
         case 4:
-            // Afficher le nombre de produits dont la date de paiement a dépassé les 6 mois
+            cout << "\n------------------------------------------" << endl;
             ProduitsDate();
             break;
         case 5:
-            // Augmenter le prix des produits de 20% si la quantité est inférieure à 100 pièces
+            cout << "\n------------------------------------------" << endl;
             AugmenterPrix();
             AfficherProduits(produits);
             break;

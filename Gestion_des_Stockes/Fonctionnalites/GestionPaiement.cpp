@@ -1,23 +1,27 @@
 #include "../Header.hpp"
 
-void afficherMenuGestionPaiement()
-{
-    cout << "\n-----------------------------------------------" << endl;
-    cout << "\n******** Menu de Gestion des Paiements ********" << endl;
-    cout << "1. Remplir la liste des paiements" << endl;
-    cout << "2. Ajouter 20% de TVA sur les produits de chaque paiement" << endl;
-    cout << "3. Modifier le fournisseur d'un paiement donné" << endl;
-    cout << "4. Ajouter/modifier/supprimer un produit d'un paiement donné" << endl;
-    cout << "5. Afficher la fiche de paiement pour chaque paiement" << endl;
-    cout << "6. Retour au menu principal" << endl;
-    cout << "Choix : ";
-}
-
 void remplirListePaiements()
 {
     int nombrePaiements;
-    cout << "Entrez le nombre de paiements à ajouter : ";
-    cin >> nombrePaiements;
+
+    // Loop until a valid integer is entered for the number of payments
+    while (true)
+    {
+        cout << "Entrez le nombre de paiements à ajouter : ";
+        string nombrePaiementsStr;
+        cin >> nombrePaiementsStr;
+
+        // Validate if input is a valid integer
+        if (estNombre(nombrePaiementsStr))
+        {
+            nombrePaiements = stoi(nombrePaiementsStr);
+            break;
+        }
+        else
+        {
+            cout << "Le nombre de paiements doit être un nombre entier. Veuillez réessayer." << endl;
+        }
+    }
 
     for (int i = 0; i < nombrePaiements; ++i)
     {
@@ -25,29 +29,133 @@ void remplirListePaiements()
         float montant;
         int jour, mois, annee;
 
-        cout << "ID du paiement : ";
-        cin >> idPaiement;
-        cout << "Montant : ";
-        cin >> montant;
-        cout << "Date (jour mois annee) : ";
-        cin >> jour >> mois >> annee;
+        // Input validation loop for payment ID
+        while (true)
+        {
+            cout << "ID du paiement : ";
+            string idPaiementStr;
+            cin >> idPaiementStr;
+
+            // Validate if input is a valid integer
+            if (estNombre(idPaiementStr))
+            {
+                idPaiement = stoi(idPaiementStr);
+
+                // Check if the payment ID already exists
+                bool idExists = false;
+                for (const auto &p : paiements)
+                {
+                    if (p.getIdPaiement() == idPaiement)
+                    {
+                        idExists = true;
+                        break;
+                    }
+                }
+
+                if (idExists)
+                {
+                    cout << "Ce ID de paiement existe déjà. Veuillez réessayer." << endl;
+                    continue; // Ask user to re-enter ID
+                }
+
+                break;
+            }
+            else
+            {
+                cout << "L'ID du paiement doit être un nombre entier. Veuillez réessayer." << endl;
+            }
+        }
+
+        while (true)
+        {
+            cout << "Montant : ";
+            string montantStr;
+            cin >> montantStr;
+
+            // Validate if input is a valid floating-point number
+            if (estNombreFlottant(montantStr))
+            {
+                montant = stof(montantStr);
+                break;
+            }
+            else
+            {
+                cout << "Le montant doit être un nombre valide. Veuillez réessayer." << endl;
+            }
+        }
+
+        // Input validation loop for date components
+        while (true)
+        {
+            cout << "Date (jour mois annee) : ";
+            string jourStr, moisStr, anneeStr;
+            cin >> jourStr >> moisStr >> anneeStr;
+
+            // Validate if input is a valid integer
+            if (estNombreFlottant(jourStr) && estNombreFlottant(moisStr) && estNombreFlottant(anneeStr))
+            {
+                jour = stoi(jourStr);
+                mois = stoi(moisStr);
+                annee = stoi(anneeStr);
+
+                // Validate if the date components form a valid date
+                if (jour >= 1 && jour <= 31 && mois >= 1 && mois <= 12 && annee >= 1900 && annee <= 2024)
+                {
+                    break;
+                }
+                else
+                {
+                    cout << "La date doit être valide. Veuillez réessayer." << endl;
+                }
+            }
+            else
+            {
+                cout << "Les composants de la date doivent être des nombres entiers. Veuillez réessayer." << endl;
+            }
+        }
+
         Date datePaiement = {jour, mois, annee};
 
-        cout << "ID du fournisseur : ";
-        cin >> idFournisseur;
+        while (true)
+        {
+            cout << "ID du fournisseur : ";
+            string idFournisseurStr;
+            cin >> idFournisseurStr;
 
-        // Recherche du fournisseur correspondant dans une liste de fournisseurs existante
+            if (estNombre(idFournisseurStr))
+            {
+                idFournisseur = stoi(idFournisseurStr);
+                break;
+            }
+            else
+            {
+                cout << "L'ID du fournisseur doit être un nombre entier. Veuillez réessayer." << endl;
+            }
+        }
         Fournisseur *fournisseur = TrouverFourni(idFournisseur);
 
         if (fournisseur != nullptr)
         {
-            // Créer un nouveau paiement avec le fournisseur
             Paiement paiement(idPaiement, montant, datePaiement, fournisseur);
 
-            // Saisir les détails du produit associé
             int nombreProduits;
-            cout << "Entrez le nombre de produits associés au paiement : ";
-            cin >> nombreProduits;
+
+            while (true)
+            {
+                cout << "Entrez le nombre de produits associés au paiement : ";
+                string nombreProduitsStr;
+                cin >> nombreProduitsStr;
+
+                if (estNombre(nombreProduitsStr))
+                {
+                    nombreProduits = stoi(nombreProduitsStr);
+                    break;
+                }
+                else
+                {
+                    cout << "Le nombre de produits associés doit être un nombre entier. Veuillez réessayer." << endl;
+                }
+            }
 
             for (int j = 0; j < nombreProduits; ++j)
             {
@@ -55,17 +163,35 @@ void remplirListePaiements()
                 cout << "Reference du produit associé #" << j + 1 << " : ";
                 cin >> refProduit;
 
-                // Recherche du produit correspondant
+                // Check if the product reference is already associated with the payment
+                bool produitDejaAssocie = false;
+                for (const auto &p : paiement.getProduits())
+                {
+                    if (p->getReference() == refProduit)
+                    {
+                        produitDejaAssocie = true;
+                        break;
+                    }
+                }
+
+                if (produitDejaAssocie)
+                {
+                    cout << "Ce produit est déjà associé à ce paiement. Veuillez réessayer." << endl;
+                    --j;
+                    continue;
+                }
+
                 Produit *produit = TrouverProd(refProduit);
                 if (produit != nullptr)
                 {
-                    // Ajouter le produit à la liste de produits du paiement
+
                     paiement.ajouterProduit(produit);
                     fournisseur->ajouterProduit(*produit);
                 }
                 else
                 {
                     cout << "Le produit avec la reference spécifiée n'a pas été trouvé." << endl;
+                    --j;
                 }
             }
 
@@ -101,9 +227,26 @@ void ajouterTVA()
 void ModifierFournisseurPaiement()
 {
     // Modifier le fournisseur d'un paiement donné
+    string idPaiementModifStr;
     int idPaiementModif;
-    cout << "Entrez l'identifiant du paiement à modifier : ";
-    cin >> idPaiementModif;
+
+    // Loop until a valid integer is entered for the payment identifier
+    while (true)
+    {
+        cout << "Entrez l'identifiant du paiement à modifier : ";
+        cin >> idPaiementModifStr;
+
+        // Validate if input is a valid integer
+        if (estNombre(idPaiementModifStr))
+        {
+            idPaiementModif = stoi(idPaiementModifStr);
+            break;
+        }
+        else
+        {
+            cout << "L'identifiant du paiement doit être un nombre entier. Veuillez réessayer." << endl;
+        }
+    }
 
     // Recherche du paiement dans la liste
     auto it = find_if(paiements.begin(), paiements.end(), [&](const Paiement &paiement)
@@ -115,9 +258,26 @@ void ModifierFournisseurPaiement()
         cout << "Paiement trouvé. Entrez les nouveaux détails : " << endl;
 
         // Demander à l'utilisateur de saisir les détails du nouveau fournisseur
+        string idFournisseurStr;
         int idFournisseur;
-        cout << "Nouvel identifiant du fournisseur : ";
-        cin >> idFournisseur;
+
+        // Loop until a valid integer is entered for the supplier identifier
+        while (true)
+        {
+            cout << "Nouvel identifiant du fournisseur : ";
+            cin >> idFournisseurStr;
+
+            // Validate if input is a valid integer
+            if (estNombre(idFournisseurStr))
+            {
+                idFournisseur = stoi(idFournisseurStr);
+                break;
+            }
+            else
+            {
+                cout << "L'identifiant du fournisseur doit être un nombre entier. Veuillez réessayer." << endl;
+            }
+        }
 
         // Recherche du fournisseur dans la liste des fournisseurs
         auto itFournisseur = find_if(fournisseurs.begin(), fournisseurs.end(), [&](const Fournisseur &fournisseur)
@@ -165,17 +325,16 @@ void AjouterProduit(deque<Paiement>::iterator it)
     }
 }
 
-// Modifier un produit dans un paiement donné
 void ModifierProduit(deque<Paiement>::iterator it)
 {
-    // Vérifiez s'il y a des produits dans le paiement
+    // Check if there are products in the payment
     if (it->getProduits().empty())
     {
         cout << "Aucun produit dans ce paiement." << endl;
         return;
     }
 
-    // Affichez les produits dans le paiement
+    // Display products in the payment
     cout << "Produits dans ce paiement :" << endl;
     int i = 1;
     for (const auto &produit : it->getProduits())
@@ -184,59 +343,70 @@ void ModifierProduit(deque<Paiement>::iterator it)
         i++;
     }
 
-    // Demandez à l'utilisateur de choisir le produit à modifier
+    // Ask the user to choose the product to modify
+    string choixProduitStr;
     size_t choixProduit;
-    cout << "Choisissez le produit à modifier (entrez son numéro) : ";
-    cin >> choixProduit;
 
-    // Vérifiez si le numéro de produit est valide
-    if (static_cast<size_t>(choixProduit) < 1 || static_cast<size_t>(choixProduit) > it->getProduits().size())
+    while (true)
     {
-        cout << "Numéro de produit invalide." << endl;
-        return;
+        cout << "Choisissez le produit à modifier (entrez son numéro) : ";
+        cin >> choixProduitStr;
+        if (estNombre(choixProduitStr))
+        {
+            choixProduit = stoi(choixProduitStr);
+            if (choixProduit >= 1 && choixProduit <= it->getProduits().size())
+            {
+                break;
+            }
+            else
+            {
+                cout << "Numéro de produit invalide. Veuillez entrer un numéro entre 1 et " << it->getProduits().size() << "." << endl;
+            }
+        }
+        else
+        {
+            cout << "Veuillez entrer un nombre entier valide." << endl;
+        }
     }
 
-    // Obtenez un pointeur vers le produit sélectionné
+    // Get a pointer to the selected product
     Produit *produitAModifier = it->getProduits()[choixProduit - 1];
 
-    // Affichez les détails du produit sélectionné
+    // Display the details of the selected product
     cout << "Détails du produit sélectionné :" << endl;
     cout << "Référence : " << produitAModifier->getReference() << endl;
     cout << "Désignation : " << produitAModifier->getDesignation() << endl;
     cout << "Quantité : " << produitAModifier->getQuantite() << endl;
     cout << "Prix : " << produitAModifier->getPrixHT() << endl;
 
-    // Demandez à l'utilisateur de saisir la nouvelle référence du produit
+    // Ask the user to enter the new reference of the product
     string nouvelleRef;
     cout << "Entrez la nouvelle référence du produit : ";
     cin >> nouvelleRef;
 
-    // Recherchez le produit dans la map
+    // Search for the product in the map
     auto produitIt = produits.find(nouvelleRef);
 
-    if (produitIt != produits.end()) // Le produit existe dans la map
-    {
-        // Mettez à jour le produit dans le paiement avec le produit trouvé dans la map
-        produitAModifier = produitIt->second;
+    if (produitIt != produits.end())
+    { // The product exists in the map
+        // Update the product in the payment with the product found in the map
+        produitAModifier->setReference(nouvelleRef);
         cout << "Produit mis à jour avec succès !" << endl;
     }
-    else // Le produit n'existe pas
-    {
+    else
+    { // The product does not exist
         cout << "Produit avec la référence " << nouvelleRef << " non trouvé." << endl;
     }
 }
 
-// Supprimer un produit dans un paiement donné
 void SupprimerProduit(deque<Paiement>::iterator it)
 {
-    // Vérifiez s'il y a des produits dans le paiement
     if (it->getProduits().empty())
     {
         cout << "Aucun produit dans ce paiement." << endl;
         return;
     }
 
-    // Affichez les produits dans le paiement
     cout << "Produits dans ce paiement :" << endl;
     int i = 1;
     for (const auto &produit : it->getProduits())
@@ -245,45 +415,56 @@ void SupprimerProduit(deque<Paiement>::iterator it)
         i++;
     }
 
-    // Demandez à l'utilisateur de choisir le produit à supprimer
+    string choixProduitStr;
     int choixProduit;
-    cout << "Choisissez le produit à supprimer (entrez son numéro) : ";
-    cin >> choixProduit;
 
-    // Vérifiez si le numéro de produit est valide
-    if (static_cast<size_t>(choixProduit) < 1 || static_cast<size_t>(choixProduit) > it->getProduits().size())
+    while (true)
     {
-        cout << "Numéro de produit invalide." << endl;
-        return;
+        cout << "Choisissez le produit à supprimer (entrez son numéro) : ";
+        cin >> choixProduitStr;
+        if (estNombre(choixProduitStr))
+        {
+            choixProduit = stoi(choixProduitStr);
+            if (choixProduit >= 1 && choixProduit <= static_cast<int>(it->getProduits().size()))
+            {
+                break;
+            }
+            else
+            {
+                cout << "Numéro de produit invalide. Veuillez entrer un numéro entre 1 et " << it->getProduits().size() << "." << endl;
+            }
+        }
+        else
+        {
+            cout << "Veuillez entrer un nombre entier valide." << endl;
+        }
     }
 
-    // Obtenez un pointeur vers le produit sélectionné
-    Produit *produitASupprimer = it->getProduits()[choixProduit - 1];
-
-    // Recherchez le produit dans la map
-    auto produitIt = find_if(produits.begin(), produits.end(),
-                             [&](const pair<string, Produit *> &p)
-                             { return p.second == produitASupprimer; });
-
-    if (produitIt != produits.end()) // Le produit existe dans la map
-    {
-        // Supprimez le produit du paiement
-        it->getProduits().erase(it->getProduits().begin() + choixProduit - 1);
-        cout << "Produit supprimé avec succès !" << endl;
-    }
-    else // Le produit n'existe pas
-    {
-        cout << "Le produit sélectionné n'est pas trouvé dans la liste des produits." << endl;
-    }
+    // Utilisez la méthode de suppression de produit de la classe Paiement
+    it->supprimerProduit(choixProduit - 1);
 }
 
 void ActionProduitPaiement()
 {
 
-    // Fonctionnalité d: Ajouter/modifier/supprimer un produit d'un paiement donné
     cout << "Entrez l'identifiant du paiement auquel vous souhaitez apporter des modifications : ";
+    string idPaiementModifStr;
     int idPaiementModif;
-    cin >> idPaiementModif;
+
+    // Validate input to ensure it's an integer
+    while (true)
+    {
+        cin >> idPaiementModifStr;
+        if (estNombre(idPaiementModifStr))
+        {
+            idPaiementModif = stoi(idPaiementModifStr);
+            break;
+        }
+        else
+        {
+            cout << "L'identifiant du paiement doit être un nombre entier. Veuillez réessayer : ";
+        }
+    }
 
     // Recherche du paiement dans la liste
     auto it = find_if(paiements.begin(), paiements.end(), [&](const Paiement &paiement)
@@ -302,8 +483,6 @@ void ActionProduitPaiement()
         string input;
         do
         {
-
-            // Proposer à l'utilisateur de choisir l'action à effectuer
             cout << "\n------------------------------------------" << endl;
             cout << "Choisissez une action : " << endl;
             cout << "1. Ajouter un produit" << endl;
@@ -311,43 +490,42 @@ void ActionProduitPaiement()
             cout << "3. Supprimer un produit" << endl;
             cout << "4. Retour au menu" << ::endl;
             cout << "Choix : ";
-            getline(cin, input);
+            cin >> input;
+
             if (cin.eof())
             {
                 cout << "\nAu revoir !" << endl;
                 break;
             }
-            // Si l'entrée est vide, continuer la boucle
-            if (input.empty())
-            {
-                cout << "Veuillez saisir une valeur." << endl;
-                continue;
-            }
+
             if (cin.fail() || input < "1" || input > "4")
             {
-                cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-                // Réinitialiser le flux d'entrée
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+                cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 4." << endl;
                 continue;
             }
 
-            // Convertir l'entrée en entier
-            choix = stoi(input);
+            try
+            {
+                choix = stoi(input);
+            }
+            catch (...)
+            {
+                cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+                continue;
+            }
 
             switch (choix)
             {
             case 1:
-                // Ajouter un produit
+                cout << "\n------------------------------------------" << endl;
                 AjouterProduit(it);
                 break;
             case 2:
-                // Modifier un Produit
+                cout << "\n------------------------------------------" << endl;
                 ModifierProduit(it);
                 break;
             case 3:
-                // Supprimer un produit
+                cout << "\n------------------------------------------" << endl;
                 SupprimerProduit(it);
                 break;
             case 4:
@@ -378,64 +556,73 @@ void GestionPaiement()
     string input;
     do
     {
-        afficherMenuGestionPaiement();
-        getline(cin, input);
+        cout << "\n-----------------------------------------------" << endl;
+        cout << "\n******** Menu de Gestion des Paiements ********" << endl;
+        cout << "1. Remplir la liste des paiements" << endl;
+        cout << "2. Ajouter 20% de TVA sur les produits de chaque paiement" << endl;
+        cout << "3. Modifier le fournisseur d'un paiement donné" << endl;
+        cout << "4. Ajouter/modifier/supprimer un produit d'un paiement donné" << endl;
+        cout << "5. Afficher la fiche de paiement pour chaque paiement" << endl;
+        cout << "6. Retour au menu principal" << endl;
+        cout << "Choix : ";
+
+        cin >> input;
+
         if (cin.eof())
         {
             cout << "\nAu revoir !" << endl;
             break;
         }
-        // Si l'entrée est vide, continuer la boucle
-        if (input.empty())
-        {
-            cout << "Veuillez saisir une valeur." << endl;
-            continue;
-        }
+
         if (cin.fail() || input < "1" || input > "6")
         {
-            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-            // Réinitialiser le flux d'entrée
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 6." << endl;
             continue;
         }
 
-        // Convertir l'entrée en entier
-        choix = stoi(input);
+        try
+        {
+            choix = stoi(input);
+        }
+        catch (...)
+        {
+            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            continue;
+        }
+
         switch (choix)
         {
         case 1:
         {
-            // Fonctionnalité a: Remplir la liste des paiements
+            cout << "\n------------------------------------------" << endl;
             remplirListePaiements();
             AfficherPaiements(paiements);
             break;
         }
         case 2:
         {
-            // Fonctionnalité b: Ajouter 20% de TVA sur les produits de chaque paiement
+            cout << "\n------------------------------------------" << endl;
             ajouterTVA();
             AfficherPaiements(paiements);
             break;
         }
         case 3:
         {
-            // Fonctionnalité c: Modifier le fournisseur d'un paiement donné
+            cout << "\n------------------------------------------" << endl;
             ModifierFournisseurPaiement();
             AfficherPaiements(paiements);
             break;
         }
         case 4:
         {
-            // Fonctionnalité d: Ajouter/modifier/supprimer un produit d'un paiement donné
+            cout << "\n------------------------------------------" << endl;
             ActionProduitPaiement();
             AfficherPaiements(paiements);
             break;
         }
         case 5:
         {
-            // Fonctionnalité e: Afficher la fiche de paiement pour chaque paiement
+            cout << "\n------------------------------------------" << endl;
             AfficherFiche();
             break;
         }

@@ -19,6 +19,9 @@ int main()
     Produit produit1("REF001", "Produit 1", 10, 100.0, &stock1, &fournisseur1);
     Produit produit2("REF002", "Produit 2", 5, 50.0, &stock2, &fournisseur2);
 
+    ProduitElectronique produitElectronique1("REF1", "Designation1", 10, 99.99, &stock1, &fournisseur1, "VersionMateriel1", "VersionLogiciel1");
+    ProduitElectronique produitElectronique2("REF2", "Designation2", 20, 199.99, &stock2, &fournisseur2, "VersionMateriel2", "VersionLogiciel2");
+
     // Creating Dates
     Date date1 = {12, 10, 2023};
     Date date2 = {20, 4, 2024};
@@ -60,30 +63,30 @@ int main()
         cout << "4. Gestion des paiements" << endl;
         cout << "5. Quitter" << endl;
         cout << "Choix : ";
-        getline(cin, input);
+
+        cin >> input;
+
         if (cin.eof())
         {
             cout << "\nAu revoir !" << endl;
             break;
         }
-        // Si l'entrée est vide, continuer la boucle
-        if (input.empty())
-        {
-            cout << "Veuillez saisir une valeur." << endl;
-            continue;
-        }
+
         if (cin.fail() || input < "1" || input > "5")
         {
-            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
-            // Réinitialiser le flux d'entrée
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            choix = 0; // Réinitialiser la variable choix pour éviter une boucle infinie
+            cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 5." << endl;
             continue;
         }
 
-        // Convertir l'entrée en entier
-        choix = stoi(input);
+        try
+        {
+            choix = stoi(input);
+        }
+        catch (...)
+        {
+            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            continue;
+        }
 
         switch (choix)
         {

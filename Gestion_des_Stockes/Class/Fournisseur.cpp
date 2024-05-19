@@ -7,10 +7,26 @@ int Fournisseur::getIdFournisseur() const { return idFournisseur; }
 string Fournisseur::getNom() const { return nom; }
 string Fournisseur::getContact() const { return contact; }
 
-// Méthode pour ajouter un produit
+
 void Fournisseur::ajouterProduit(const Produit &produit)
 {
     produits.push_back(produit);
+}
+
+void Fournisseur::SupprimerProduit(const string &refProduit)
+{
+    auto it = find_if(produits.begin(), produits.end(),
+                      [&](const Produit &prod) { return prod.getReference() == refProduit; });
+
+    if (it != produits.end())
+    {
+        produits.erase(it);
+        cout << "Produit supprimé avec succès du fournisseur !" << endl;
+    }
+    else
+    {
+        cout << "Aucun produit trouvé avec cette référence dans la liste du fournisseur." << endl;
+    }
 }
 
 void Fournisseur::ajouterPaiement(Paiement* paiement)
@@ -18,7 +34,6 @@ void Fournisseur::ajouterPaiement(Paiement* paiement)
     paiements.push_back(paiement);
 }
 
-// Méthode pour accéder aux produits du fournisseur
 const vector<Produit> &Fournisseur::getProduits() const
 {
     return produits;

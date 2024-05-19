@@ -12,20 +12,29 @@ void Paiement::setMontant(double newMontant) { montant = newMontant; }
 void Paiement::setDatePaiement(const Date &newDatePaiement) { datePaiement = newDatePaiement; }
 void Paiement::setFournisseur(const Fournisseur *newFournisseur) { fournisseur = newFournisseur; }
 
-// Méthode pour ajouter un produit au paiement
 void Paiement::ajouterProduit(Produit *produit)
 {
     produits.push_back(produit);
 }
 
-// Méthode pour obtenir la fiche de paiement
+void Paiement::supprimerProduit(size_t index) {
+    if (index < produits.size()) {
+        // Supprimez le produit à l'index spécifié
+        produits.erase(produits.begin() + index);
+        cout << "Produit supprimé avec succès !" << endl;
+    } else {
+        cout << "Index de produit invalide." << endl;
+    }
+}
+
+
 void Paiement::fichePaiement() const
 {
-    cout << "Identifiant paiement : " << idPaiement << endl;
-    cout << "Date paiement : " << datePaiement.jour << "/" << datePaiement.mois << "/" << datePaiement.annee << endl;
-    cout << "Identifiant fournisseur : " << fournisseur->getIdFournisseur() << endl;
-    cout << "Liste des produits : " << endl;
-    cout << "Référence produit \t Désignation \t Quantité \t Prix" << endl;
+    cout << "- Identifiant paiement : " << idPaiement << endl;
+    cout << "- Date paiement: " << datePaiement.jour << "/" << datePaiement.mois << "/" << datePaiement.annee << endl;
+    cout << "- Identifiant fournisseur : " << fournisseur->getIdFournisseur() << endl;
+    cout << "- Liste des produits : " << endl;
+    cout << "\nRéférence produit \t Désignation \t Quantité \t Prix" << endl;
     for (const auto &produit : produits)
     {
         cout << produit->getReference() << "\t" << produit->getDesignation() << "\t" << produit->getQuantite() << "\t" << produit->getPrixHT() << endl;
@@ -35,5 +44,5 @@ void Paiement::fichePaiement() const
     {
         total += produit->getQuantite() * produit->getPrixHT();
     }
-    cout << "\tTotal à payer : " << total << endl;
+    cout << "\tTotal à payer  : " << total << endl;
 }

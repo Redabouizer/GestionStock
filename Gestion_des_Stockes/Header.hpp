@@ -12,10 +12,13 @@
 #include <map>
 #include <ctime>  // Pour utiliser time()
 #include <chrono> // Pour travailler avec le temps
+#include <csignal> // for signal handling
+#include <cstdlib>  // for exit()
 
 using namespace std;
 
 class Produit;
+class ProduitElectronique;
 class Fournisseur;
 class Paiement;
 class Stock;
@@ -45,7 +48,9 @@ private:
     Fournisseur *fournisseur;
 
 public:
+    
     Produit(const std::string &ref, const std::string &des, int q, float prix, Stock *s, Fournisseur *f);
+    virtual ~Produit();
 
     string getReference() const;
     string getDesignation() const;
@@ -53,6 +58,7 @@ public:
     float getPrixHT() const;
     Fournisseur *getFournisseur() const;
     Stock *getStock() const;
+
     void setReference(const string &newReference);
     void setDesignation(const string &newDesignation);
     void setQuantite(int newQuantite);
@@ -60,6 +66,23 @@ public:
     void setFournisseur(Fournisseur *newFournisseur);
     void setStock(Stock *newStock);
 
+};
+
+class ProduitElectronique : public Produit
+{
+private:
+    string versionMateriel;
+    string versionLogiciel;
+
+public:
+    ProduitElectronique(string ref, string des, int q, float prix, Stock *s, Fournisseur *f, string versionMat, string versionLog);
+    ~ProduitElectronique();
+    
+    string getVersionMateriel() const;
+    string getVersionLogiciel() const;
+    void setVersionMateriel(const string &versionMat);
+    void setVersionLogiciel(const string &versionLog);
+    
 };
 
 class Fournisseur
@@ -79,8 +102,9 @@ public:
     const vector<Produit> &getProduits() const;
     const vector<Paiement *> getPaiements() const;
     void ajouterProduit(const Produit &produit);
-    void ajouterPaiement(Paiement* paiement);
-    bool operator<(const Fournisseur& other) const ;
+    void SupprimerProduit(const string &refProduit);
+    void ajouterPaiement(Paiement *paiement);
+    bool operator<(const Fournisseur &other) const;
 };
 
 class Paiement
@@ -104,19 +128,8 @@ public:
     void setDatePaiement(const Date &newDatePaiement);
     void setFournisseur(const Fournisseur *newFournisseur);
     void ajouterProduit(Produit *produit);
+    void supprimerProduit(size_t index);
     void fichePaiement() const;
-};
-
-class ProduitElectronique : public Produit
-{
-private:
-    string versionMateriel;
-    string versionLogiciel;
-
-public:
-    ProduitElectronique(string ref, string des, int q, float prix, string versionMat, string versionLog);
-    string getVersionMateriel() const;
-    string getVersionLogiciel() const;
 };
 
 class Stock
@@ -132,9 +145,10 @@ public:
     string getReferenceStock() const;
     string getDescriptionStock() const;
     vector<Produit *> getProduits() const;
-    Depot* getDepot() const;
+    Depot *getDepot() const;
     void setDescriptionStock(const string &newDescription);
     void ajouterProduit(Produit *produit);
+    void supprimerProduit(Produit* produit);
 };
 
 class Depot
@@ -163,12 +177,19 @@ void AfficherFournisseurs(const set<Fournisseur> &fournisseurs);
 void AfficherStocks(const list<Stock> &stocks);
 void AfficherPaiements(const deque<Paiement> &paiements);
 void AfficherProduits(const map<string, Produit *> &produits);
+void AfficherProduitsElectroniques(const map<string, ProduitElectronique *> &produits);
 void AfficherDepots(const vector<Depot> &depots);
 
 Fournisseur *TrouverFourni(int idFournisseur);
-Produit *TrouverProd(string refProduit);
-Stock* TrouverStoc(string referenceStock);
-Paiement* TrouverPaiem(int idPaiement);
-Depot* TrouverDepo(int idDepot);
+Produit *TrouverProd(const string &refProduit);
+ProduitElectronique *TrouverProdEle(const string &refProduit);
+Stock *TrouverStoc(string referenceStock);
+Paiement *TrouverPaiem(int idPaiement);
+Depot *TrouverDepo(int idDepot);
+
+bool estNombre(const string &str);
+bool estNombreFlottant(const string &str);
+
+
 
 #endif
