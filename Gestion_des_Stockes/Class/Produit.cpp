@@ -1,6 +1,6 @@
 #include "../Header.hpp"
 
-Produit::Produit(const std::string &ref, const std::string &des, int q, float prix, Stock *s, Fournisseur *f) : reference(ref), designation(des), quantite(q), prixHT(prix), stock(s), fournisseur(f) {}
+Produit::Produit(const  string &ref, const  string &des, int q, float prix, Stock *s, Fournisseur *f) : reference(ref), designation(des), quantite(q), prixHT(prix), stock(s), fournisseur(f) {}
 
 string Produit::getReference() const { return reference; }
 string Produit::getDesignation() const { return designation; }

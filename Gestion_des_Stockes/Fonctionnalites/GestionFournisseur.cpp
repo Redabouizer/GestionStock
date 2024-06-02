@@ -9,7 +9,6 @@ void AjouterFournisseur()
     string nomFournisseur;
     string contactFournisseur;
 
-    // Prompt and validate the ID of the supplier
     while (true)
     {
         cout << "ID du fournisseur : ";
@@ -21,7 +20,7 @@ void AjouterFournisseur()
         }
         else
         {
-            cout << "L'ID du fournisseur doit être un nombre entier. Veuillez réessayer." << endl;
+            cout <<"\033[31m"<< "L'ID du fournisseur doit être un nombre entier. Veuillez réessayer." << "\033[0m" << endl;
         }
     }
 
@@ -34,7 +33,7 @@ void AjouterFournisseur()
     Fournisseur nouveauFournisseur(idFournisseur, nomFournisseur, contactFournisseur);
 
     fournisseurs.insert(nouveauFournisseur);
-    cout << "Fournisseur ajouté avec succès !" << endl;
+    cout << "\033[32m" << "Fournisseur ajouté avec succès !"<< "\033[0m" << endl;
 }
 
 void SupprimerFournisseur()
@@ -53,7 +52,7 @@ void SupprimerFournisseur()
         }
         else
         {
-            cout << "L'identifiant du fournisseur doit être un nombre entier. Veuillez réessayer : ";
+            cout <<"\033[31m"<< "L'identifiant du fournisseur doit être un nombre entier. Veuillez réessayer : "<< "\033[0m";
         }
     }
 
@@ -62,9 +61,8 @@ void SupprimerFournisseur()
     {
         if (itFournisseur->getIdFournisseur() == idFournisseurSuppr)
         {
-            // Supprimez le fournisseur de la liste
             fournisseurs.erase(itFournisseur);
-            cout << "Fournisseur supprimé avec succès !" << endl;
+            cout << "\033[32m" <<"Fournisseur supprimé avec succès !" << "\033[0m"<< endl;
 
             for (auto &pair : produits)
             {
@@ -75,19 +73,19 @@ void SupprimerFournisseur()
                 }
             }
 
-            cout << "Produits associés au fournisseur supprimés avec succès !" << endl;
+            cout << "\033[32m" << "Produits associés au fournisseur supprimés avec succès !" << "\033[0m"<< endl;
 
             return;
         }
         ++itFournisseur;
     }
 
-    cout << "Aucun fournisseur trouvé avec cet identifiant." << endl;
+    cout <<"\033[31m"<< "Aucun fournisseur trouvé avec cet identifiant." << "\033[0m"<< endl;
 }
 
 void AfficherProduitsS()
 {
-    cout << "Produits dont le prix est supérieur à 150dh :" << endl;
+    cout << "\033[32m" << "Produits dont le prix est supérieur à 150dh :" << "\033[0m"<< endl;
 
     for (const auto &fournisseur : fournisseurs)
     {
@@ -109,25 +107,25 @@ void GestionFournisseur()
     string input;
     do
     {
-        cout << "\n------------------------------------------" << endl;
-        cout << "\n******** Menu de Gestion des Fournisseurs ********" << endl;
+        cout << "\033[1;31m"<< "\n------------------------------------------" << endl;
+        cout <<"\033[36m"<< "\n******** Menu de Gestion des Fournisseurs ********" << endl;
         cout << "1. Ajouter un fournisseur" << endl;
         cout << "2. Supprimer un fournisseur" << endl;
         cout << "3. Afficher les produits dont le prix est supérieur à 150dh" << endl;
         cout << "4. Retour au menu principal" << endl;
-        cout << "Choix : ";
+        cout <<"\033[33m"<< "Choix : "<< "\033[0m";
 
         cin >> input;
 
         if (cin.eof())
         {
-            cout << "\nAu revoir !" << endl;
+            cout << "\033[32m" <<"\nAu revoir !" << endl;
             break;
         }
 
         if (cin.fail() || input < "1" || input > "4")
         {
-            cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 4." << endl;
+            cout <<"\033[31m"<< "Choix invalide. Veuillez saisir un numéro entre 1 et 4." << "\033[0m"<< endl;
             continue;
         }
 
@@ -137,7 +135,7 @@ void GestionFournisseur()
         }
         catch (...)
         {
-            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            cout <<"\033[31m"<< "Choix invalide. Veuillez saisir un numéro valide." << "\033[0m"<< endl;
             continue;
         }
 
@@ -147,20 +145,20 @@ void GestionFournisseur()
         {
             cout << "\n------------------------------------------" << endl;
             AjouterFournisseur();
-            AfficherFournisseurs(fournisseurs);
+            // AfficherFournisseurs(fournisseurs);
             break;
         }
         case 2:
             cout << "\n------------------------------------------" << endl;
             SupprimerFournisseur();
-            AfficherFournisseurs(fournisseurs);
+            // AfficherFournisseurs(fournisseurs);
             break;
         case 3:
             cout << "\n------------------------------------------" << endl;
             AfficherProduitsS();
             break;
         case 4:
-            cout << "Retour au menu principal." << endl;
+            cout << "\033[32m" << "Retour au menu principal." << "\033[0m"<< endl;
             break;
         }
     } while (choix != 4);

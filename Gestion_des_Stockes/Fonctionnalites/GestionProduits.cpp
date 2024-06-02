@@ -10,11 +10,9 @@ void AjouterProduit()
     float prixProduit;
     string typeProduit;
 
-    // Prompt for the type of product
     cout << "Type du produit (Standard/Electronique) : ";
     cin >> typeProduit;
 
-    // Loop until a unique product reference is provided
     while (true)
     {
         cout << "Référence du produit : ";
@@ -22,25 +20,21 @@ void AjouterProduit()
 
         bool referenceExists = false;
 
-        // Check if the reference already exists
         if (produits.find(refProduit) != produits.end())
         {
-            cout << "Un produit avec cette référence existe déjà. Veuillez utiliser une autre référence." << endl;
+            cout <<"\033[31m"<< "Un produit avec cette référence existe déjà. Veuillez utiliser une autre référence." << "\033[0m" << endl;
             referenceExists = true;
         }
 
-        // If the reference does not exist, break out of the loop
         if (!referenceExists)
         {
             break;
         }
     }
 
-    // Continue with the rest of the input
     cout << "Désignation du produit : ";
     cin >> designationProduit;
 
-    // Prompt and validate product quantity
     string quantiteStr;
     while (true)
     {
@@ -53,11 +47,10 @@ void AjouterProduit()
         }
         else
         {
-            cout << "La quantité doit être un nombre entier. Veuillez réessayer." << endl;
+            cout <<"\033[31m"<< "La quantité doit être un nombre entier. Veuillez réessayer." << "\033[0m" <<endl;
         }
     }
 
-    // Prompt and validate product price
     string prixStr;
     while (true)
     {
@@ -70,7 +63,7 @@ void AjouterProduit()
         }
         else
         {
-            cout << "Le prix doit être un nombre valide. Veuillez réessayer." << endl;
+            cout <<"\033[31m"<< "Le prix doit être un nombre valide. Veuillez réessayer." << "\033[0m" << endl;
         }
     }
 
@@ -83,7 +76,7 @@ void AjouterProduit()
         stock = TrouverStoc(refStock);
         if (stock == nullptr)
         {
-            cout << "Stock non trouvé. Veuillez saisir une référence valide." << endl;
+            cout <<"\033[31m"<< "Stock non trouvé. Veuillez saisir une référence valide." << "\033[0m" << endl;
         }
     }
 
@@ -97,7 +90,7 @@ void AjouterProduit()
 
         if (!estNombre(idFournisseurStr))
         {
-            cout << "L'ID du fournisseur doit être un nombre entier. Veuillez réessayer." << endl;
+            cout <<"\033[31m"<<"L'ID du fournisseur doit être un nombre entier. Veuillez réessayer." << "\033[0m" << endl;
             continue;
         }
 
@@ -105,7 +98,7 @@ void AjouterProduit()
         fournisseur = TrouverFourni(idFournisseur);
         if (fournisseur == nullptr)
         {
-            cout << "Fournisseur non trouvé. Veuillez saisir une ID valide." << endl;
+            cout <<"\033[31m"<<"Fournisseur non trouvé. Veuillez saisir une ID valide." << "\033[0m" << endl;
         }
         else
         {
@@ -138,7 +131,7 @@ void AjouterProduit()
         stock->ajouterProduit(nouveauProduit);
     }
 
-    cout << "Produit ajouté avec succès !" << endl;
+    cout << "\033[32m" <<  "Produit ajouté avec succès !" << "\033[0m" << endl;
 }
 
 void ModifierProduit()
@@ -149,7 +142,6 @@ void ModifierProduit()
     cout << "Entrez la référence du produit à modifier : ";
     cin >> refProduit;
 
-    // Check if the product exists
     auto it = produits.find(refProduit);
     if (it != produits.end())
     {
@@ -159,7 +151,6 @@ void ModifierProduit()
         cout << "Quantité du produit : " << it->second->getQuantite() << endl;
         cout << "Prix du produit : " << it->second->getPrixHT() << endl;
 
-        // Update fields based on user input
         string nouvelleDesignation;
         int nouvelleQuantite;
         float nouveauPrix;
@@ -167,7 +158,6 @@ void ModifierProduit()
         cout << "Nouvelle désignation du produit : ";
         cin >> nouvelleDesignation;
 
-        // Prompt and validate the new quantity
         string nouvelleQuantiteStr;
         while (true)
         {
@@ -180,11 +170,10 @@ void ModifierProduit()
             }
             else
             {
-                cout << "La quantité doit être un nombre entier. Veuillez réessayer." << endl;
+                cout <<"\033[31m"<< "La quantité doit être un nombre entier. Veuillez réessayer." << "\033[0m" << endl;
             }
         }
 
-        // Prompt and validate the new price
         string nouveauPrixStr;
         while (true)
         {
@@ -197,7 +186,7 @@ void ModifierProduit()
             }
             else
             {
-                cout << "Le prix doit être un nombre valide. Veuillez réessayer." << endl;
+                cout <<"\033[31m"<< "Le prix doit être un nombre valide. Veuillez réessayer." << "\033[0m" << endl;
             }
         }
 
@@ -205,7 +194,6 @@ void ModifierProduit()
         it->second->setQuantite(nouvelleQuantite);
         it->second->setPrixHT(nouveauPrix);
 
-        // For electronic products, update version information
         if (dynamic_cast<ProduitElectronique *>(it->second) != nullptr)
         {
             string nouvelleVersionMateriel, nouvelleVersionLogiciel;
@@ -217,11 +205,11 @@ void ModifierProduit()
             dynamic_cast<ProduitElectronique *>(it->second)->setVersionLogiciel(nouvelleVersionLogiciel);
         }
 
-        cout << "Produit modifié avec succès !" << endl;
+        cout << "\033[32m" <<  "Produit modifié avec succès !" << "\033[0m" << endl;
     }
     else
     {
-        cout << "Aucun produit trouvé avec cette référence." << endl;
+        cout <<"\033[31m"<< "Aucun produit trouvé avec cette référence." << "\033[0m" <<endl;
     }
 }
 
@@ -245,16 +233,16 @@ void SupprimerProduit()
         {
             // Supprimez le produit du fournisseur
             fournisseur->SupprimerProduit(refProduit);
-            cout << "Produit supprimé avec succès !" << endl;
+            cout << "\033[32m" <<  "Produit supprimé avec succès !"<< "\033[0m" << endl;
         }
         else
         {
-            cout << "Aucun fournisseur trouvé pour ce produit." << endl;
+            cout <<"\033[31m"<<"Aucun fournisseur trouvé pour ce produit." << "\033[0m" << endl;
         }
     }
     else
     {
-        cout << "Aucun produit trouvé avec cette référence." << endl;
+        cout <<"\033[31m"<< "Aucun produit trouvé avec cette référence." << "\033[0m" << endl;
     }
 }
 
@@ -288,7 +276,7 @@ void ProduitsDate()
         }
     }
 
-    cout << "Nombre total de produits dont la date de paiement a depasse les 6 mois : " << totalProduitsDepasses << endl;
+    cout << "\033[32m" <<  "Nombre total de produits dont la date de paiement a depasse les 6 mois : " << totalProduitsDepasses << "\033[0m" << endl;
 }
 
 void AugmenterPrix()
@@ -300,7 +288,7 @@ void AugmenterPrix()
         {
             float nouveauPrix = produit->getPrixHT() * 1.2;
             produit->setPrixHT(nouveauPrix);
-            cout << "Le prix du produit " << produit->getReference() << " a été augmenté de 20%." << endl;
+            cout << "\033[32m" <<  "Le prix du produit " << produit->getReference() << " a été augmenté de 20%." << "\033[0m" << endl;
         }
     }
 }
@@ -311,26 +299,26 @@ void gestionProduits()
     string input;
     do
     {
-        cout << "\n----------------------------------------------" << endl;
-        cout << "\n******** Menu de Gestion des Produits ********" << endl;
+        cout << "\033[1;31m"<< "\n------------------------------------------" << endl;
+        cout <<"\033[36m"<< "\n******** Menu de Gestion des Produits ********" << endl;
         cout << "1. Ajouter un produit" << endl;
         cout << "2. Modifier un produit" << endl;
         cout << "3. Supprimer un produit" << endl;
         cout << "4. Afficher le nombre de produits dont la date de paiement a dépassé les 6 mois" << endl;
         cout << "5. Augmenter le prix des produits de 20% si la quantité est inférieure à 100 pièces" << endl;
-        cout << "6. Retour au menu principal" << endl;
-        cout << "Choix : ";
+        cout << "6. Retour au menu principal"<< "\033[0m" << endl;
+        cout <<"\033[33m"<< "Choix : "<< "\033[0m";
         cin >> input;
 
         if (cin.eof())
         {
-            cout << "\nAu revoir !" << endl;
+            cout << "\033[32m" << "\nAu revoir !" << "\033[0m" << endl;
             break;
         }
 
         if (cin.fail() || input < "1" || input > "6")
         {
-            cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 6." << endl;
+            cout <<"\033[31m"<< "Choix invalide. Veuillez saisir un numéro entre 1 et 6." << "\033[0m"<< endl;
             continue;
         }
 
@@ -340,7 +328,7 @@ void gestionProduits()
         }
         catch (...)
         {
-            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            cout <<"\033[31m"<< "Choix invalide. Veuillez saisir un numéro valide."<< "\033[0m" << endl;
             continue;
         }
 
@@ -349,17 +337,17 @@ void gestionProduits()
         case 1:
             cout << "\n------------------------------------------" << endl;
             AjouterProduit();
-            AfficherProduits(produits);
+            // AfficherProduits(produits);
             break;
         case 2:
             cout << "\n------------------------------------------" << endl;
             ModifierProduit();
-            AfficherProduits(produits);
+            // AfficherProduits(produits);
             break;
         case 3:
             cout << "\n------------------------------------------" << endl;
             SupprimerProduit();
-            AfficherProduits(produits);
+            // AfficherProduits(produits);
             break;
         case 4:
             cout << "\n------------------------------------------" << endl;
@@ -368,10 +356,10 @@ void gestionProduits()
         case 5:
             cout << "\n------------------------------------------" << endl;
             AugmenterPrix();
-            AfficherProduits(produits);
+            // AfficherProduits(produits);
             break;
         case 6:
-            cout << "Retour au menu principal." << endl;
+            cout << "\033[32m" << "Retour au menu principal."<< "\033[0m" << endl;
             break;
         }
     } while (choix != 6);

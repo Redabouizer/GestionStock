@@ -16,7 +16,7 @@ void AjouterStock()
         stockExistant = TrouverStoc(refStock);
         if (stockExistant != nullptr)
         {
-            cout << "Un stock avec cette référence existe déjà. Veuillez en choisir une autre." << endl;
+            cout <<"\033[31m" << "Un stock avec cette référence existe déjà. Veuillez en choisir une autre."<< "\033[0m" << endl;
         }
     } while (stockExistant != nullptr);
 
@@ -26,45 +26,38 @@ void AjouterStock()
     int idDepot;
     string idDepotstr;
     Depot *depot = nullptr;
-    vector<Depot> depots; // Vector to store existing depots
+    vector<Depot> depots; 
 
-    // Prompt user to enter the ID of the depot with verification
     do
     {
         cout << "Entrez l'ID du dépôt : ";
         cin >> idDepotstr;
 
-        // Check if the input is a valid integer
         if (!estNombre(idDepotstr))
         {
-            cout << "L'ID du dépôt doit être un nombre entier. Veuillez réessayer." << endl;
+            cout <<"\033[31m" << "L'ID du dépôt doit être un nombre entier. Veuillez réessayer."<< "\033[0m" << endl;
             continue;
         }
 
-        idDepot = stoi(idDepotstr); // Convert string to integer
+        idDepot = stoi(idDepotstr);
 
-        // Find the depot by ID
         depot = TrouverDepo(idDepot);
 
         if (!depot)
         {
-            cout << "Dépôt avec l'ID " << idDepot << " non trouvé. Voulez-vous le créer ? (O/N) : ";
+            cout <<"\033[31m"<< "Dépôt avec l'ID " << idDepot << " non trouvé. Voulez-vous le créer ? (O/N) : "<< "\033[0m";
             char choix;
             cin >> choix;
             if (choix == 'O' || choix == 'o')
             {
-                // Code to create the new depot (not implemented in this example)
                 cout << "Création du nouveau dépôt avec l'ID " << idDepot << "." << endl;
-                // Assume the user will input the address and capacity for the new depot
                 string address;
                 int capacity;
                 cout << "Entrez l'adresse du nouveau dépôt : ";
                 cin >> address;
                 cout << "Entrez la capacité du nouveau dépôt : ";
                 cin >> capacity;
-                // Create the new depot and add it to the depots vector
                 depots.emplace_back(idDepot, address, capacity);
-                // Set the depot pointer to point to the newly created depot
                 depot = &depots.back();
             }
         }
@@ -73,7 +66,7 @@ void AjouterStock()
     // Création du nouveau stock
     Stock nouveauStock(refStock, descStock, depot);
 
-    std::set<string> referencesAjoutees;
+     set<string> referencesAjoutees;
 
     int nombreProduits;
     cout << "Combien de produits souhaitez-vous ajouter au stock ? ";
@@ -94,14 +87,14 @@ void AjouterStock()
 
             if (referencesAjoutees.find(refProduit) != referencesAjoutees.end())
             {
-                cout << "Le produit avec la référence " << refProduit << " a déjà été ajouté. Veuillez essayer une autre référence." << endl;
+                cout <<"\033[31m"<< "Le produit avec la référence " << refProduit << " a déjà été ajouté. Veuillez essayer une autre référence." << "\033[0m"<< endl;
                 continue;
             }
 
             produit = TrouverProd(refProduit);
             if (!produit)
             {
-                cout << "Produit avec la référence " << refProduit << " non trouvé. Veuillez essayer à nouveau." << endl;
+                cout <<"\033[31m"<< "Produit avec la référence " << refProduit << " non trouvé. Veuillez essayer à nouveau." << "\033[0m"<< endl;
             }
             else
             {
@@ -116,7 +109,7 @@ void AjouterStock()
     depot->ajouterStock(&nouveauStock);
     stocks.push_back(nouveauStock);
 
-    cout << "Stock ajouté avec succès !" << endl;
+    cout << "\033[32m" "Stock ajouté avec succès !"<< "\033[0m" << endl;
 }
 
 void AfficherNbProduits()
@@ -133,7 +126,6 @@ void ModifierStock()
     cout << "Entrez la référence du stock à modifier : ";
     cin >> refStockModif;
 
-    // Recherche du stock dans la liste
     auto it = find_if(stocks.begin(), stocks.end(), [&](const Stock &stock)
                       { return stock.getReferenceStock() == refStockModif; });
 
@@ -143,25 +135,25 @@ void ModifierStock()
         string input;
         do
         {
-            cout << "\n------------------------------------------" << endl;
-            cout << "\nQue souhaitez-vous faire ?" << endl;
+           cout << "\033[1;31m"<< "\n------------------------------------------" << endl;
+        cout <<"\033[36m"<<"\nQue souhaitez-vous faire ?" << endl;
             cout << "1. Modifier la description du stock." << endl;
             cout << "2. Ajouter un produit au stock." << endl;
             cout << "3. Supprimer un produit du stock." << endl;
             cout << "4. Retour au menu principal" << endl;
-            cout << "Choix : ";
+            cout <<"\033[33m"<< "Choix : "<< "\033[0m";
 
             cin >> input;
 
             if (cin.eof())
             {
-                cout << "\nAu revoir !" << endl;
+                cout << "\033[32m" "\nAu revoir !" << endl;
                 break;
             }
 
             if (cin.fail() || input < "1" || input > "4")
             {
-                cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 4." << endl;
+                cout <<"\033[31m" << "Choix invalide. Veuillez saisir un numéro entre 1 et 4." << "\033[0m"<< endl;
                 continue;
             }
 
@@ -171,7 +163,7 @@ void ModifierStock()
             }
             catch (...)
             {
-                cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+                cout <<"\033[31m" << "Choix invalide. Veuillez saisir un numéro valide." << "\033[0m"<< endl;
                 continue;
             }
 
@@ -183,7 +175,7 @@ void ModifierStock()
                 string nouvelleDesc;
                 cin >> nouvelleDesc;
                 it->setDescriptionStock(nouvelleDesc);
-                cout << "La description du stock a été modifiée avec succès !" << endl;
+                cout <<"\033[32m"<< "La description du stock a été modifiée avec succès !" << "\033[0m"<< endl;
                 break;
             }
             case 2:
@@ -208,21 +200,21 @@ void ModifierStock()
 
                     if (produitExiste)
                     {
-                        cout << "Ce produit existe déjà dans le stock. Veuillez réessayer." << endl;
+                        cout <<"\033[31m" << "Ce produit existe déjà dans le stock. Veuillez réessayer." << "\033[0m"<< endl;
                     }
                     else
                     {
                         Produit *existingProduct = TrouverProd(refProduit);
                         if (!existingProduct)
                         {
-                            cout << "Produit non trouvé. Veuillez réessayer." << endl;
+                            cout <<"\033[31m" << "Produit non trouvé. Veuillez réessayer." << "\033[0m"<< endl;
                             continue;
                         }
 
                         it->ajouterProduit(existingProduct);
                         existingProduct->setStock(&(*it));
 
-                        cout << "Le produit a été ajouté au stock avec succès !" << endl;
+                        cout << "\033[32m" "Le produit a été ajouté au stock avec succès !"<< "\033[0m"<< endl;
                         break;
                     }
                 } while (true);
@@ -247,19 +239,19 @@ void ModifierStock()
 
                 if (!produitASupprimer)
                 {
-                    cout << "Ce produit n'existe pas dans le stock." << endl;
+                    cout <<"\033[31m"<< "Ce produit n'existe pas dans le stock."<< "\033[0m" << endl;
                 }
                 else
                 {
                     it->supprimerProduit(produitASupprimer);
                     produitASupprimer->setStock(nullptr);
-                    cout << "Le produit a été supprimé du stock avec succès !" << endl;
+                    cout << "\033[32m" "Le produit a été supprimé du stock avec succès !" << "\033[0m"<< endl;
                 }
                 break;
             }
             case 4:
             {
-                cout << "Retour au menu principal." << endl;
+                cout << "\033[32m" "Retour au menu principal." << "\033[0m"<< endl;
                 return;
             }
             }
@@ -267,7 +259,7 @@ void ModifierStock()
     }
     else
     {
-        cout << "Aucun stock trouvé avec cette référence." << endl;
+       cout <<"\033[31m"<< "Aucun stock trouvé avec cette référence." << "\033[0m"<< endl;
     }
 }
 
@@ -289,12 +281,12 @@ void SupprimerStock()
         }
 
         stocks.erase(it);
-        cout << "Stock supprimé avec succès !" << endl;
+        cout << "\033[32m" "Stock supprimé avec succès !" << "\033[0m"<< endl;
     }
     else
     {
         // Le stock n'a pas été trouvé
-        cout << "Aucun stock trouvé avec cette référence." << endl;
+        cout <<"\033[31m"<< "Aucun stock trouvé avec cette référence."<< "\033[0m" << endl;
     }
 }
 
@@ -305,26 +297,26 @@ void GestionStock()
     string input;
     do
     {
-        cout << "\n------------------------------------------" << endl;
-        cout << "\n********Menu de Gestion des Stocks********" << endl;
+        cout << "\033[1;31m"<< "\n------------------------------------------" << endl;
+        cout <<"\033[36m"<<"\n********Menu de Gestion des Stocks********" << endl;
         cout << "1. Ajouter un stock" << endl;
         cout << "2. Afficher le nombre de produits de chaque stock" << endl;
         cout << "3. Modifier un stock" << endl;
         cout << "4. Supprimer un stock" << endl;
         cout << "5. Retour au menu principal" << endl;
-        cout << "Choix : ";
+        cout <<"\033[33m"<< "Choix : "<< "\033[0m";
         cin >> input;
 
         // Vérification si l'utilisateur souhaite quitter
         if (cin.eof())
         {
-            cout << "\nAu revoir !" << endl;
+            cout << "\033[32m"<< "\nAu revoir !" << "\033[0m" << endl;
             break;
         }
 
         if (cin.fail() || input < "1" || input > "5")
         {
-            cout << "Choix invalide. Veuillez saisir un numéro entre 1 et 5." << endl;
+            cout <<"\033[31m"<< "Choix invalide. Veuillez saisir un numéro entre 1 et 5."<< "\033[0m" << endl;
             continue;
         }
 
@@ -334,7 +326,7 @@ void GestionStock()
         }
         catch (...)
         {
-            cout << "Choix invalide. Veuillez saisir un numéro valide." << endl;
+            cout <<"\033[31m"<< "Choix invalide. Veuillez saisir un numéro valide." << "\033[0m"<< endl;
             continue;
         }
 
@@ -344,7 +336,7 @@ void GestionStock()
         {
             cout << "\n------------------------------------------" << endl;
             AjouterStock();
-            AfficherStocks(stocks);
+            // AfficherStocks(stocks);
             break;
         }
         case 2:
@@ -357,19 +349,19 @@ void GestionStock()
         {
             cout << "\n------------------------------------------" << endl;
             ModifierStock();
-            AfficherStocks(stocks);
+            // AfficherStocks(stocks);
             break;
         }
         case 4:
         {
             cout << "\n------------------------------------------" << endl;
             SupprimerStock();
-            AfficherStocks(stocks);
+            // AfficherStocks(stocks);
             break;
         }
         case 5:
         {
-            cout << "Retour au menu principal." << endl;
+            cout << "\033[32m" << "Retour au menu principal." << "\033[0m"<< endl;
             break;
         }
         }

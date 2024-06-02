@@ -91,47 +91,47 @@ void AfficherPaiements(const deque<Paiement> &paiements)
     }
 }
 
-void AfficherProduits(const std::map<std::string, Produit *> &produits)
+void AfficherProduits(const  map< string, Produit *> &produits)
 {
-    std::cout << "Liste des produits :" << std::endl;
+     cout << "Liste des produits :" <<  endl;
 
-    std::cout << std::left << std::setw(20) << "Référence" << std::setw(20) << "Désignation" << std::setw(20) << "Quantité" << std::setw(20) << "Prix_HT" << std::setw(20) << "Réf_Stock" << std::setw(20) << "ID_Fournisseur" << std::setw(20) << "Version Logiciel" << std::setw(20) << "Version Materiel" << std::endl;
+     cout <<  left <<  setw(20) << "Référence" <<  setw(20) << "Désignation" <<  setw(20) << "Quantité" <<  setw(20) << "Prix_HT" <<  setw(20) << "Réf_Stock" <<  setw(20) << "ID_Fournisseur" <<  setw(20) << "Version Logiciel" <<  setw(20) << "Version Materiel" <<  endl;
 
     for (const auto &pair : produits)
     {
         const Produit *produit = pair.second;
-        std::cout << std::left << std::setw(20) << produit->getReference() << std::setw(20) << produit->getDesignation() << std::setw(20) << produit->getQuantite() << std::setw(20) << produit->getPrixHT();
+         cout <<  left <<  setw(20) << produit->getReference() <<  setw(20) << produit->getDesignation() <<  setw(20) << produit->getQuantite() <<  setw(20) << produit->getPrixHT();
 
         if (produit->getStock() != nullptr)
         {
-            std::cout << std::setw(20) << produit->getStock()->getReferenceStock();
+             cout <<  setw(20) << produit->getStock()->getReferenceStock();
         }
         else
         {
-            std::cout << std::setw(20) << "-";
+             cout <<  setw(20) << "-";
         }
 
         // Vérifier si le produit est associé à un fournisseur
         if (produit->getFournisseur() != nullptr)
         {
-            std::cout << std::setw(20) << produit->getFournisseur()->getIdFournisseur();
+             cout <<  setw(20) << produit->getFournisseur()->getIdFournisseur();
         }
         else
         {
-            std::cout << std::setw(20) << "-";
+             cout <<  setw(20) << "-";
         }
 
         // Check if the product is of type ProduitElectronique
         if (const ProduitElectronique *produitElectronique = dynamic_cast<const ProduitElectronique *>(produit))
         {
-            std::cout << std::setw(20) << produitElectronique->getVersionLogiciel() << std::setw(20) << produitElectronique->getVersionMateriel();
+             cout <<  setw(20) << produitElectronique->getVersionLogiciel() <<  setw(20) << produitElectronique->getVersionMateriel();
         }
         else
         {
-            std::cout << std::setw(20) << "-" << std::setw(20) << "-";
+             cout <<  setw(20) << "-" <<  setw(20) << "-";
         }
 
-        std::cout << std::endl;
+         cout <<  endl;
     }
 }
 

@@ -49,7 +49,7 @@ private:
 
 public:
     
-    Produit(const std::string &ref, const std::string &des, int q, float prix, Stock *s, Fournisseur *f);
+    Produit(const  string &ref, const  string &des, int q, float prix, Stock *s, Fournisseur *f);
     virtual ~Produit();
 
     string getReference() const;
@@ -91,7 +91,7 @@ private:
     int idFournisseur;
     string nom;
     string contact;
-    vector<Produit> produits;
+    vector<Produit> produits;//*
     vector<Paiement *> paiements;
 
 public:
@@ -157,7 +157,7 @@ private:
     int idDepot;
     string adresse;
     int capacite;
-    vector<Stock *> stocks;
+    vector<Stock *> stocks;//son*
 
 public:
     Depot(int id, string ad, int cap);

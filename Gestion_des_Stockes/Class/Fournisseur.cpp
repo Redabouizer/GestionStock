@@ -2,7 +2,6 @@
 
 Fournisseur::Fournisseur(int id, string n, string c) : idFournisseur(id), nom(n), contact(c) {}
 
-// Méthodes pour accéder aux attributs
 int Fournisseur::getIdFournisseur() const { return idFournisseur; }
 string Fournisseur::getNom() const { return nom; }
 string Fournisseur::getContact() const { return contact; }
